@@ -9,7 +9,13 @@ RUN apt-get clean && \
     libcairo2-dev \
     libpango1.0-dev \
     texlive-latex-base \
+    texlive-latex-recommended \
     texlive-fonts-recommended \
+    texlive-science \
+    texlive-fonts-extra\
+    texlive-xetex \
+    texlive-latex-extra \
+    lmodern \
     build-essential \
     pkg-config \
     python3-dev \
