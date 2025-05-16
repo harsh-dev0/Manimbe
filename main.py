@@ -430,6 +430,7 @@ def generate_manim_code(prompt: str):
         15. Avoid complex packages and custom LaTeX commands
         16. For fractions, use a/b notation instead of \\frac
         17. Use only basic LaTeX commands and packages( We only have texlive-latex-base, texlive-latex-recommended, texlive-latex-extra )
+        18. We have these fonts ( fonts-freefont-ttf fonts-dejavu fonts-liberation fonts-noto fonts-noto-cjk fonts-noto-color-emoji )
         
         Example format:
         # Dynamic Wave Function Visualization
