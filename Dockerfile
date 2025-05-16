@@ -1,27 +1,42 @@
 FROM python:3.10-slim
 
-# Install system dependencies
-RUN apt-get clean && \
-    rm -rf /var/lib/apt/lists/* && \
-    apt-get update -o Acquire::Check-Valid-Until=false && \
-    apt-get install -y \
+# Install system dependencies with minimal LaTeX and essential fonts
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    # Core dependencies
     ffmpeg \
     libcairo2-dev \
     libpango1.0-dev \
-    texlive-latex-base \
-    texlive-latex-recommended \
-    texlive-fonts-recommended \
-    texlive-science \
-    texlive-fonts-extra\
-    texlive-xetex \
-    texlive-latex-extra \
-    lmodern \
     build-essential \
     pkg-config \
     python3-dev \
     libffi-dev \
     git \
-    && rm -rf /var/lib/apt/lists/*
+    # Minimal LaTeX installation
+    texlive-latex-base \
+    texlive-latex-recommended \
+    texlive-latex-extra \
+    # Font packages (kept minimal)
+    fonts-freefont-ttf \
+    fonts-dejavu \
+    fonts-liberation \
+    fonts-noto \
+    fonts-noto-cjk \
+    fonts-noto-color-emoji \
+    # Clean up in the same layer to reduce image size
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* \
+    # Remove unnecessary files (saves ~1.2GB)
+    && rm -rf \
+       /usr/share/texlive/texmf-dist/doc \
+       /usr/share/texlive/texmf-dist/source \
+       /usr/share/texlive/texmf-dist/tex/latex/misc/texdimens.tex \
+       /usr/share/texlive/texmf-dist/tex/latex/base/doc \
+    # Remove man pages and other documentation
+    && rm -rf /usr/share/man/* /usr/share/doc/* /usr/share/info/* \
+    # Clean package cache
+    && rm -rf /var/cache/apt/archives/* \
+    # Clean font cache
+    && fc-cache -f -v
 
 # Set working directory
 WORKDIR /app

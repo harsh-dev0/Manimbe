@@ -414,21 +414,27 @@ def generate_manim_code(prompt: str):
         
         Requirements:
         1. Start with a comment containing a descriptive title
-        2. Include 'from manim import *'
+        2. Include 'from manim import *' and 'import numpy as np'
         3. Define a class that inherits from Scene
         4. Implement a detailed construct() method with multiple animations
         5. Use proper colors, positioning, and timing
         6. Include helpful comments explaining each section
         7. Create visually appealing animations with smooth transitions
         8. Keep animations STRICTLY under 30 seconds total and aim for 10-15 seconds when possible
-        9. Use appropriate mathematical notation when needed
-        10. Ensure code is complete and runnable without modifications
+        9. Use MathTex() for simple mathematical expressions only when necessary
+        10. Keep LaTeX usage minimal - prefer Text() for labels and simple text
         11. ONLY create 2D animations - DO NOT use 3D objects or ThreeDScene
         12. Optimize for performance - avoid complex calculations or too many objects
+        13. For LaTeX, use only basic math mode with simple commands
+        14. Stick to standard LaTeX math symbols and basic operations
+        15. Avoid complex packages and custom LaTeX commands
+        16. For fractions, use a/b notation instead of \\frac
+        17. Use only basic LaTeX commands and packages( We only have texlive-latex-base, texlive-latex-recommended, texlive-latex-extra, texlive-fonts-recommended, texlive-science)
         
         Example format:
         # Dynamic Wave Function Visualization
         from manim import *
+        import numpy as np
         
         class WaveFunction(Scene):
             def construct(self):
@@ -446,11 +452,17 @@ def generate_manim_code(prompt: str):
                 # Plot the wave
                 graph = axes.plot(func, color=YELLOW)
                 
-                # Add labels
-                labels = axes.get_axis_labels(x_label="x", y_label="sin(x)")
+                # Add axis labels
+                x_label = MathTex("x").next_to(axes.x_axis.get_end(), DOWN)
+                y_label = MathTex("y").next_to(axes.y_axis.get_end(), LEFT)
+                
+                # Simple equation using MathTex
+                eq_text = MathTex("y = \\sin(x)", color=GREEN).to_edge(UP)
                 
                 # Create animation
-                self.play(Create(axes), Create(labels))
+                self.play(Create(axes))
+                self.play(Write(x_label), Write(y_label))
+                self.play(Write(eq_text))
                 self.wait(0.5)
                 self.play(Create(graph))
                 self.wait(1)
