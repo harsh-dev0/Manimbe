@@ -429,7 +429,7 @@ def generate_manim_code(prompt: str):
         14. Stick to standard LaTeX math symbols and basic operations
         15. Avoid complex packages and custom LaTeX commands
         16. For fractions, use a/b notation instead of \\frac
-        17. Use only basic LaTeX commands and packages( We only have texlive-latex-base, texlive-latex-recommended, texlive-latex-extra, texlive-fonts-recommended, texlive-science)
+        17. Use only basic LaTeX commands and packages( We only have texlive-latex-base, texlive-latex-recommended, texlive-latex-extra )
         
         Example format:
         # Dynamic Wave Function Visualization
