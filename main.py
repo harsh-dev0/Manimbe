@@ -732,12 +732,19 @@ scene.render()
             f.write(runner_script)
 
         # Run the script in a separate process with timeout
+        popen_kwargs = {
+            'stdout': subprocess.PIPE,
+            'stderr': subprocess.PIPE,
+            'text': True
+        }
+        
+        # Add Windows-specific flags only if on Windows
+        if sys.platform == 'win32':
+            popen_kwargs['creationflags'] = subprocess.CREATE_NO_WINDOW
+            
         process = subprocess.Popen(
             [sys.executable, str(runner_path)],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-            creationflags=subprocess.CREATE_NO_WINDOW  # Windows only
+            **popen_kwargs
         )
 
         try:
