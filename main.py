@@ -4,7 +4,6 @@ from fastapi import FastAPI, HTTPException, BackgroundTasks, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
-from fastapi.security import APIKeyHeader
 from pydantic import BaseModel
 from s3_storage import S3Storage
 
@@ -20,63 +19,23 @@ import time
 import json
 import sys
 import re
-import atexit
-from typing import Optional
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-# Initialize FastAPI with metadata
-app = FastAPI(
-    title="VisuaMath Forge API",
-    description="API for generating mathematical animations using Manim",
-    version="1.0.0"
-)
+app = FastAPI(title="VisuaMath Forge API")
 
-# Configure CORS with proper origins
-ALLOWED_ORIGINS = os.environ.get("ALLOWED_ORIGINS", "*").split(",")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=ALLOWED_ORIGINS,
+    allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["GET", "POST"],
+    allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# API key security
-API_KEY_NAME = "X-API-Key"
-api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=False)
-
-def get_api_key(api_key_header: Optional[str] = None) -> Optional[str]:
-    if api_key_header:
-        return api_key_header
-    return None
-
-def cleanup():
-    try:
-        for job_id in list(generation_jobs.keys()):
-            try:
-                job_file = JOB_DIR / f"{job_id}.json"
-                if job_file.exists():
-                    with open(job_file, "r") as f:
-                        job_data = json.load(f)
-                        if job_data.get("status") == "processing":
-                            job_data["status"] = "failed"
-                            job_data["error"] = "Server shutdown during processing"
-                            with open(job_file, "w") as f:
-                                json.dump(job_data, f)
-            except Exception as e:
-                logger.error(f"Error cleaning up job {job_id}: {e}")
-    except Exception as e:
-        logger.error(f"Error in cleanup: {e}")
-
 def handle_exit_signal(signum, frame):
     logger.info(f"Received exit signal {signum}. Cleaning up and shutting down...")
-    cleanup()
     sys.exit(0)
-
-# Register cleanup function
-atexit.register(cleanup)
 
 signal.signal(signal.SIGINT, handle_exit_signal)
 signal.signal(signal.SIGTERM, handle_exit_signal)
@@ -109,49 +68,26 @@ else:
     logger.info("S3 storage not initialized, using local storage only")
 
 
-# Initialize LLM clients
-anthropic_client = None
-groq_client = None
-
 try:
-    # Try Groq first
-    groq_api_key = os.environ.get("GROQ_API_KEY")
-    if groq_api_key:
-        try:
-            from groq import Groq
-            groq_client = Groq()
-            # Set API key after initialization
-            groq_client.api_key = groq_api_key
-            # Test the client with a simple completion
-            chat_completion = groq_client.chat.completions.create(
-                messages=[{
-                    "role": "system",
-                    "content": "Test connection"
-                }],
-                model="llama3-8b-8192",  # Using the correct model name
-                max_tokens=1
-            )
-            logger.info("Groq client initialized and tested successfully")
-        except Exception as e:
-            logger.error(f"Error initializing Groq client: {e}")
+    anthropic_api_key = os.environ.get("ANTHROPIC_API_KEY")
+    if anthropic_api_key:
+        anthropic_client = Anthropic(api_key=anthropic_api_key)
+        logger.info("Anthropic client initialized successfully")
+    else:
+        groq_api_key = os.environ.get("GROQ_API_KEY")
+        if groq_api_key:
+            import groq
+            groq_client = groq.Client(api_key=groq_api_key)
+            logger.info("Groq client initialized successfully")
+            anthropic_client = None
+        else:
+            logger.warning("No API keys found for LLM services")
+            anthropic_client = None
             groq_client = None
-    
-    # Try Anthropic if Groq fails or isn't available
-    if not groq_client:
-        anthropic_api_key = os.environ.get("ANTHROPIC_API_KEY")
-        if anthropic_api_key:
-            try:
-                anthropic_client = Anthropic(api_key=anthropic_api_key)
-                logger.info("Anthropic client initialized successfully")
-            except Exception as e:
-                logger.error(f"Error initializing Anthropic client: {e}")
-                anthropic_client = None
-        
-    if not groq_client and not anthropic_client:
-        logger.warning("No working LLM services available")
-
 except Exception as e:
     logger.error(f"Error initializing LLM clients: {e}")
+    anthropic_client = None
+    groq_client = None
 
 DEV_MODE = os.environ.get("DEV_MODE", "0") == "1"
 if DEV_MODE:
@@ -193,45 +129,8 @@ def save_job(job_id, job_data):
     except Exception as e:
         logger.error(f"Error saving job {job_id}: {e}")
 
-# Rate limiting setup
-# Simple in-memory rate limiting
-from collections import defaultdict
-from datetime import datetime, timedelta
-
-rate_limit_store = defaultdict(list)
-REQUESTS_PER_MINUTE = 60
-
-def check_rate_limit(client_ip: str) -> bool:
-    now = datetime.now()
-    # Clean old requests
-    rate_limit_store[client_ip] = [req_time for req_time in rate_limit_store[client_ip]
-                                if now - req_time < timedelta(minutes=1)]
-    
-    # Check rate limit
-    if len(rate_limit_store[client_ip]) >= REQUESTS_PER_MINUTE:
-        return False
-    
-    rate_limit_store[client_ip].append(now)
-    return True
-
-@app.middleware("http")
-async def rate_limit_middleware(request: Request, call_next):
-    client_ip = request.client.host
-    
-    if not check_rate_limit(client_ip):
-        return JSONResponse(
-            status_code=429,
-            content={"error": "Rate limit exceeded. Please try again later."}
-        )
-    
-    response = await call_next(request)
-    return response
-
 @app.get("/")
-async def read_root(api_key: str = None):
-    api_key = get_api_key(api_key)
-    if not api_key and not DEV_MODE:
-        raise HTTPException(status_code=401, detail="API key required")
+def read_root():
     return {"message": "Welcome to VisuaMath Forge API"}
 
 @app.get("/test-s3-upload")
@@ -261,21 +160,11 @@ def test_s3_upload():
         return {"success": False, "message": f"Error: {str(e)}"}
 
 @app.post("/generate", response_model=ManimGenerationResponse)
-async def generate_animation(
-    request: PromptRequest,
-    background_tasks: BackgroundTasks,
-    api_key: str = None
-):
-    # Validate API key
-    api_key = get_api_key(api_key)
-    if not api_key and not DEV_MODE:
-        raise HTTPException(status_code=401, detail="API key required")
-        
+async def generate_animation(request: PromptRequest, background_tasks: BackgroundTasks):
     job_id = str(uuid.uuid4())
     job_data = {
         "status": "processing",
         "created_at": time.time(),
-        "api_key": api_key if not DEV_MODE else None,
         "prompt": request.prompt
     }
     generation_jobs[job_id] = job_data
@@ -786,19 +675,12 @@ scene.render()
             f.write(runner_script)
 
         # Run the script in a separate process with timeout
-        popen_kwargs = {
-            'stdout': subprocess.PIPE,
-            'stderr': subprocess.PIPE,
-            'text': True
-        }
-        
-        # Add Windows-specific flags only on Windows
-        if sys.platform == 'win32':
-            popen_kwargs['creationflags'] = subprocess.CREATE_NO_WINDOW
-        
         process = subprocess.Popen(
             [sys.executable, str(runner_path)],
-            **popen_kwargs
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            creationflags=subprocess.CREATE_NO_WINDOW  # Windows only
         )
 
         try:
@@ -869,27 +751,5 @@ def create_dummy_video(job_id: str, error_message: str):
 
 if __name__ == "__main__":
     import uvicorn
-    
-    # Load required environment variables
-    required_vars = [
-        "ANTHROPIC_API_KEY",
-        "AWS_ACCESS_KEY_ID",
-        "AWS_SECRET_ACCESS_KEY",
-        "S3_BUCKET_NAME"
-    ]
-    
-    missing_vars = [var for var in required_vars if not os.environ.get(var)]
-    if missing_vars:
-        logger.error(f"Missing required environment variables: {', '.join(missing_vars)}")
-        sys.exit(1)
-    
-    # Configure uvicorn with production settings
-    uvicorn.run(
-        "main:app",
-        host="0.0.0.0",
-        port=int(os.environ.get("PORT", 8000)),
-        workers=int(os.environ.get("WORKERS", 4)),
-        reload=False,  # Disable reload in production
-        access_log=True,
-        log_level="info"
-    )
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=True)
