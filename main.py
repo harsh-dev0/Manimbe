@@ -6,7 +6,6 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
 from pydantic import BaseModel
 from s3_storage import S3Storage
-from animation_cache import AnimationCache
 
 from anthropic import Anthropic
 import os
@@ -68,9 +67,6 @@ if s3_storage.is_enabled:
 else:
     logger.info("S3 storage not initialized, using local storage only")
     
-# Initialize animation cache
-animation_cache = AnimationCache(s3_storage)
-logger.info("Animation cache initialized")
 
 
 try:
@@ -287,33 +283,6 @@ def process_animation_request(job_id: str, prompt: str):
     try:
         logger.info(f"Processing animation request: {job_id}, prompt: {prompt}")
         
-        # Check cache first
-        cached_result = animation_cache.get_cached_animation(prompt)
-        if cached_result:
-            logger.info(f"Using cached animation for job {job_id}")
-            
-            # Update job with cached data
-            generation_jobs[job_id] = {
-                "status": "completed",
-                "prompt": prompt,
-                "created_at": time.time(),
-                "completed_at": time.time(),
-                "title": cached_result.get("title", "Cached Animation"),
-                "cached": True
-            }
-            
-            # Add video URL based on whether it's from S3 or local
-            if "s3_url" in cached_result:
-                generation_jobs[job_id]["video_url"] = cached_result["s3_url"]
-            elif "local_path" in cached_result:
-                local_path = cached_result["local_path"]
-                file_name = os.path.basename(local_path)
-                generation_jobs[job_id]["video_url"] = f"/media/{file_name}"
-            
-            save_job(job_id, generation_jobs[job_id])
-            return
-        
-        # If not cached, proceed with generation
         # Update job status to processing
         generation_jobs[job_id] = {
             "status": "processing",
@@ -322,23 +291,27 @@ def process_animation_request(job_id: str, prompt: str):
         }
         save_job(job_id, generation_jobs[job_id])
         
+        # Generate Manim code
         code, title = generate_manim_code(prompt)
-        
         if not code:
             raise ValueError("Failed to generate Manim code")
         
+        # Save code to file
         code_file_path = CODE_DIR / f"{job_id}.py"
         with open(code_file_path, "w") as f:
             f.write(code)
         
+        # Update job status to rendering
         generation_jobs[job_id].update({
             "title": title,
             "status": "rendering"
         })
         save_job(job_id, generation_jobs[job_id])
         
+        # Create the animation video
         video_result = create_video(job_id, code_file_path)
         
+        # Handle video storage (local or S3)
         output_path = MEDIA_DIR / f"{job_id}.mp4"
         if os.path.exists(output_path):
             try:
@@ -351,7 +324,7 @@ def process_animation_request(job_id: str, prompt: str):
                 if aws_access_key and aws_secret_key and bucket_name:
                     logger.info(f"S3 upload: Credentials found, uploading to bucket {bucket_name}")
                     
-                    # Initialize S3 client directly (exactly like test.py)
+                    # Initialize S3 client
                     import boto3
                     s3_client = boto3.client(
                         's3',
@@ -360,11 +333,10 @@ def process_animation_request(job_id: str, prompt: str):
                         region_name=aws_region
                     )
                     
-                    # Upload the file using a more direct approach
+                    # Upload to S3
                     s3_key = f"videos/{job_id}.mp4"
                     logger.info(f"S3 upload: Uploading {output_path} to {bucket_name}/{s3_key}")
                     
-                    # Use a more direct approach with the low-level client
                     with open(str(output_path), 'rb') as data:
                         s3_client.put_object(
                             Bucket=bucket_name,
@@ -400,30 +372,18 @@ def process_animation_request(job_id: str, prompt: str):
             "video_path": video_path,
             "completed_at": time.time()
         })
-        
-        # Cache the successful animation
-        if video_url and title:
-            if video_url.startswith("https"):
-                # S3 URL
-                animation_cache.cache_animation(
-                    prompt=prompt,
-                    job_id=job_id,
-                    title=title,
-                    s3_url=video_url
-                )
-                logger.info(f"Cached animation with S3 URL: {video_url}")
-            else:
-                # Local URL
-                animation_cache.cache_animation(
-                    prompt=prompt,
-                    job_id=job_id,
-                    title=title,
-                    video_path=video_path
-                )
-                logger.info(f"Cached animation with local path: {video_path}")
-        
         save_job(job_id, generation_jobs[job_id])
         
+    except Exception as e:
+        error_message = str(e)
+        logger.error(f"Error processing animation request: {error_message}")
+        
+        generation_jobs[job_id].update({
+            "status": "failed",
+            "error": error_message,
+            "completed_at": time.time()
+        })
+        save_job(job_id, generation_jobs[job_id])
         logger.info(f"Animation generation completed for job {job_id}")
         
     except Exception as e:
