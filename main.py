@@ -6,6 +6,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
 from pydantic import BaseModel
 from s3_storage import S3Storage
+from animation_cache import AnimationCache
 
 from anthropic import Anthropic
 import os
@@ -66,6 +67,10 @@ if s3_storage.is_enabled:
     logger.info(f"S3 bucket configured: {s3_storage.bucket_name}")
 else:
     logger.info("S3 storage not initialized, using local storage only")
+    
+# Initialize animation cache
+animation_cache = AnimationCache(s3_storage)
+logger.info("Animation cache initialized")
 
 
 try:
@@ -280,12 +285,40 @@ def setup_periodic_cleanup():
 
 def process_animation_request(job_id: str, prompt: str):
     try:
-        logger.info(f"Processing animation request for job {job_id}")
+        logger.info(f"Processing animation request: {job_id}, prompt: {prompt}")
         
+        # Check cache first
+        cached_result = animation_cache.get_cached_animation(prompt)
+        if cached_result:
+            logger.info(f"Using cached animation for job {job_id}")
+            
+            # Update job with cached data
+            generation_jobs[job_id] = {
+                "status": "completed",
+                "prompt": prompt,
+                "created_at": time.time(),
+                "completed_at": time.time(),
+                "title": cached_result.get("title", "Cached Animation"),
+                "cached": True
+            }
+            
+            # Add video URL based on whether it's from S3 or local
+            if "s3_url" in cached_result:
+                generation_jobs[job_id]["video_url"] = cached_result["s3_url"]
+            elif "local_path" in cached_result:
+                local_path = cached_result["local_path"]
+                file_name = os.path.basename(local_path)
+                generation_jobs[job_id]["video_url"] = f"/media/{file_name}"
+            
+            save_job(job_id, generation_jobs[job_id])
+            return
+        
+        # If not cached, proceed with generation
+        # Update job status to processing
         generation_jobs[job_id] = {
             "status": "processing",
-            "created_at": time.time(),
-            "prompt": prompt
+            "prompt": prompt,
+            "created_at": time.time()
         }
         save_job(job_id, generation_jobs[job_id])
         
@@ -367,6 +400,28 @@ def process_animation_request(job_id: str, prompt: str):
             "video_path": video_path,
             "completed_at": time.time()
         })
+        
+        # Cache the successful animation
+        if video_url and title:
+            if video_url.startswith("https"):
+                # S3 URL
+                animation_cache.cache_animation(
+                    prompt=prompt,
+                    job_id=job_id,
+                    title=title,
+                    s3_url=video_url
+                )
+                logger.info(f"Cached animation with S3 URL: {video_url}")
+            else:
+                # Local URL
+                animation_cache.cache_animation(
+                    prompt=prompt,
+                    job_id=job_id,
+                    title=title,
+                    video_path=video_path
+                )
+                logger.info(f"Cached animation with local path: {video_path}")
+        
         save_job(job_id, generation_jobs[job_id])
         
         logger.info(f"Animation generation completed for job {job_id}")
@@ -405,9 +460,11 @@ def generate_manim_code(prompt: str):
         5. Use proper colors, positioning, and timing
         6. Include helpful comments explaining each section
         7. Create visually appealing animations with smooth transitions
-        8. Keep animations between 5-15 seconds total
+        8. Keep animations STRICTLY under 30 seconds total and aim for 10-15 seconds when possible
         9. Use appropriate mathematical notation when needed
         10. Ensure code is complete and runnable without modifications
+        11. ONLY create 2D animations - DO NOT use 3D objects or ThreeDScene
+        12. Optimize for performance - avoid complex calculations or too many objects
         
         Example format:
         # Dynamic Wave Function Visualization
