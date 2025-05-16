@@ -692,15 +692,22 @@ scene.render()
             f.write(runner_script)
 
         # Run the script in a separate process with timeout
+        # Basic process arguments that work on all platforms
         popen_kwargs = {
             'stdout': subprocess.PIPE,
             'stderr': subprocess.PIPE,
             'text': True
         }
-        
-        # Add Windows-specific flags only if on Windows
+
+        # For Windows, add CREATE_NO_WINDOW flag
+        # For Linux/Unix, we'll use preexec_fn to handle process group
         if sys.platform == 'win32':
             popen_kwargs['creationflags'] = subprocess.CREATE_NO_WINDOW
+        else:
+            # On Unix-like systems, start process in new session
+            # This ensures clean process termination
+            import os
+            popen_kwargs['preexec_fn'] = os.setsid
             
         process = subprocess.Popen(
             [sys.executable, str(runner_path)],
