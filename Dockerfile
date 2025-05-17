@@ -14,14 +14,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     # Minimal LaTeX installation
     texlive-latex-base \
     texlive-latex-recommended \
+    texlive-fonts-recommended \
     texlive-latex-extra \
-    # Font packages (kept minimal)
-    fonts-freefont-ttf \
-    fonts-dejavu \
-    fonts-liberation \
-    fonts-noto \
-    fonts-noto-cjk \
-    fonts-noto-color-emoji \
+    texlive-science\
     # Clean up in the same layer to reduce image size
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
