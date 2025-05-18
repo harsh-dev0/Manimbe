@@ -410,7 +410,7 @@ def process_animation_request(job_id: str, prompt: str):
 def generate_manim_code(prompt: str):
     """Generate Manim code using AI with fallback to API error demo"""
     try:
-        system_prompt = """You are a Manim expert and Python animation specialist. Generate only clean, production-quality Python code using the Manim library to visually explain math and algorithm concepts.
+        system_prompt = """You are a Manim expert. Generate only Python code for mathematical animations.
 
 Strict Requirements:
 1. Start with a descriptive comment title (e.g., "# Animated Derivative of a Parabola")
@@ -442,41 +442,43 @@ Best Practices:
 - Prefer fluid scene progression over excessive motion or clutter
 - If showing a graph or plot, label it and introduce it slowly with context
 
-Example of output:
+Example:
 ```python
-# Visualizing Derivative of x^2
+# Dynamic Wave Function Visualization
 from manim import *
 import numpy as np
 
-config.pixel_height = 720
-config.pixel_width = 1280
-config.frame_width = 14
-config.frame_height = 8
-
-class DerivativeParabola(Scene):
+class WaveFunction(Scene):
     def construct(self):
+        # Create axes
         axes = Axes(
             x_range=[-3, 3, 1],
-            y_range=[-1, 9, 1],
-            tips=False
-        ).center()
-
-        parabola = axes.plot(lambda x: x**2, color=BLUE)
-        tangent = always_redraw(lambda: axes.get_secant_slope_group(
-            x=1, graph=parabola, dx=0.01, secant_line_color=RED, secant_line_length=2
-        ))
-
-        label = Text("y = x^2", font_size=32).to_edge(UP)
-
-        self.play(Create(axes))
-        self.play(Write(label))
-        self.play(Create(parabola))
-        self.wait(0.5)
-        self.play(Create(tangent))
-        self.wait(2)
-        self.play(FadeOut(tangent))
-        self.wait(1)
-
+            y_range=[-1.5, 1.5, 0.5],
+            axis_config={"color": BLUE},
+                )
+                
+                # Create wave function
+                def func(x):
+                    return np.sin(x)
+                
+                # Plot the wave
+                graph = axes.plot(func, color=YELLOW)
+                
+                # Add axis labels
+                x_label = MathTex("x").next_to(axes.x_axis.get_end(), DOWN)
+                y_label = MathTex("y").next_to(axes.y_axis.get_end(), LEFT)
+                
+                # Simple equation using MathTex
+                eq_text = MathTex("y = \\sin(x)", color=GREEN).to_edge(UP)
+                
+                # Create animation
+                self.play(Create(axes))
+                self.play(Write(x_label), Write(y_label))
+                self.play(Write(eq_text))
+                self.wait(0.5)
+                self.play(Create(graph))
+                self.wait(1)
+```
         """
 
         # Try to use Anthropic Claude API if available
