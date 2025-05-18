@@ -16,7 +16,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     texlive-latex-recommended \
     texlive-fonts-recommended \
     texlive-latex-extra \
-    texlive-science\
+    texlive-science \
+    dvisvgm \
     # Clean up in the same layer to reduce image size
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
