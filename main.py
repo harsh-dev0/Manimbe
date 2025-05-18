@@ -410,61 +410,73 @@ def process_animation_request(job_id: str, prompt: str):
 def generate_manim_code(prompt: str):
     """Generate Manim code using AI with fallback to API error demo"""
     try:
-        system_prompt = """You are a Manim expert. Generate only Python code for mathematical animations.
+        system_prompt = """You are a Manim expert and Python animation specialist. Generate only clean, production-quality Python code using the Manim library to visually explain math and algorithm concepts.
 
-Requirements:
-1. Start with a comment with title
-2. Include 'from manim import *' and 'import numpy as np'
-3. Define a class inheriting from Scene
-4. Implement construct() with animations
-5. Set camera resolution explicitly: config.pixel_height = 720, config.pixel_width = 1280
-6. Center all objects properly on screen using .center() or .move_to(ORIGIN)
-7. Keep animations under 20 seconds
-8. Use Text() instead of MathTex when possible
-9. For LaTeX, only use packages: texlive-latex-base, texlive-latex-recommended, texlive-latex-extra, texlive-science, texlive-fonts-recommended
-10. Use only 2D animations
-11. Add final self.wait(1) to prevent abrupt ending
-12. Add config.frame_width = 14 and config.frame_height = 8 at start
-13. For fractions, use a/b notation instead of "\frac"
-14. Create visually appealing animations with smooth transitions
-15. Avoid complex packages and custom LaTeX commands
-Example:
+Strict Requirements:
+1. Start with a descriptive comment title (e.g., "# Animated Derivative of a Parabola")
+2. Always include: `from manim import *` and `import numpy as np`
+3. Set resolution explicitly:
+   config.pixel_height = 720  
+   config.pixel_width = 1280  
+   config.frame_width = 14  
+   config.frame_height = 8
+4. Use only 2D scenes (Scene class, no 3D)
+5. Keep total animation time under 30 seconds (you may slightly exceed if needed for smooth flow)
+6. Center all objects with `.center()` or `.move_to(ORIGIN)` unless context requires otherwise
+7. Use `Text()` when displaying simple text; use `MathTex()` for equations, with LaTeX limited to:
+   - texlive-latex-base
+   - texlive-latex-recommended
+   - texlive-latex-extra
+   - texlive-science
+   - texlive-fonts-recommended
+8. Avoid custom LaTeX commands, complex packages, or advanced macros
+9. Use a/b notation instead of `\frac` for fractions
+10. Use smooth, creative transitions — like `FadeIn`, `Transform`, or `GrowFromCenter`
+11. All objects should appear in a meaningful sequence that builds mathematical intuition
+12. End each animation with `self.wait(1)` to prevent abrupt cutoff
+13. Do not include explanation or markdown — only valid Python code
+
+Best Practices:
+- Animations should be visually pleasing, informative, and intuitive
+- Emphasize mathematical clarity (axes, labels, highlights, color coding)
+- Prefer fluid scene progression over excessive motion or clutter
+- If showing a graph or plot, label it and introduce it slowly with context
+
+Example of output:
 ```python
-# Dynamic Wave Function Visualization
+# Visualizing Derivative of x^2
 from manim import *
 import numpy as np
 
-class WaveFunction(Scene):
+config.pixel_height = 720
+config.pixel_width = 1280
+config.frame_width = 14
+config.frame_height = 8
+
+class DerivativeParabola(Scene):
     def construct(self):
-        # Create axes
         axes = Axes(
             x_range=[-3, 3, 1],
-            y_range=[-1.5, 1.5, 0.5],
-            axis_config={"color": BLUE},
-                )
-                
-                # Create wave function
-                def func(x):
-                    return np.sin(x)
-                
-                # Plot the wave
-                graph = axes.plot(func, color=YELLOW)
-                
-                # Add axis labels
-                x_label = MathTex("x").next_to(axes.x_axis.get_end(), DOWN)
-                y_label = MathTex("y").next_to(axes.y_axis.get_end(), LEFT)
-                
-                # Simple equation using MathTex
-                eq_text = MathTex("y = \\sin(x)", color=GREEN).to_edge(UP)
-                
-                # Create animation
-                self.play(Create(axes))
-                self.play(Write(x_label), Write(y_label))
-                self.play(Write(eq_text))
-                self.wait(0.5)
-                self.play(Create(graph))
-                self.wait(1)
-```
+            y_range=[-1, 9, 1],
+            tips=False
+        ).center()
+
+        parabola = axes.plot(lambda x: x**2, color=BLUE)
+        tangent = always_redraw(lambda: axes.get_secant_slope_group(
+            x=1, graph=parabola, dx=0.01, secant_line_color=RED, secant_line_length=2
+        ))
+
+        label = Text("y = x^2", font_size=32).to_edge(UP)
+
+        self.play(Create(axes))
+        self.play(Write(label))
+        self.play(Create(parabola))
+        self.wait(0.5)
+        self.play(Create(tangent))
+        self.wait(2)
+        self.play(FadeOut(tangent))
+        self.wait(1)
+
         """
 
         # Try to use Anthropic Claude API if available
