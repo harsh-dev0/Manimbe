@@ -278,6 +278,57 @@ def setup_periodic_cleanup():
     CODE_DIR.mkdir(parents=True, exist_ok=True)
     MEDIA_DIR.mkdir(parents=True, exist_ok=True)
     JOB_DIR.mkdir(parents=True, exist_ok=True)
+    
+    # Start a background task for periodic cleanup
+    import asyncio
+    from fastapi.concurrency import run_in_threadpool
+    
+    async def periodic_cleanup():
+        while True:
+            await run_in_threadpool(cleanup_old_jobs)
+            await asyncio.sleep(3600)  # Run cleanup every hour
+    
+    asyncio.create_task(periodic_cleanup())
+
+def cleanup_old_jobs():
+    """Clean up old jobs from memory and disk to prevent memory accumulation."""
+    try:
+        current_time = time.time()
+        jobs_to_remove = []
+        
+        # Find jobs older than 24 hours
+        for job_id, job_data in generation_jobs.items():
+            job_age = current_time - job_data.get("created_at", current_time)
+            if job_age > 86400:  # 24 hours in seconds
+                jobs_to_remove.append(job_id)
+        
+        # Remove old jobs from memory
+        for job_id in jobs_to_remove:
+            if job_id in generation_jobs:
+                del generation_jobs[job_id]
+                logger.info(f"Removed job {job_id} from memory")
+            
+            # Remove job file
+            job_file = JOB_DIR / f"{job_id}.json"
+            if job_file.exists():
+                job_file.unlink()
+                logger.info(f"Removed job file {job_id}.json")
+            
+            # Remove code file
+            code_file = CODE_DIR / f"{job_id}.py"
+            if code_file.exists():
+                code_file.unlink()
+                logger.info(f"Removed code file {job_id}.py")
+            
+            # Remove media file if it exists locally
+            media_files = list(MEDIA_DIR.glob(f"*{job_id}*.mp4"))
+            for media_file in media_files:
+                media_file.unlink()
+                logger.info(f"Removed media file {media_file}")
+        
+        logger.info(f"Cleanup completed: removed {len(jobs_to_remove)} old jobs")
+    except Exception as e:
+        logger.error(f"Error during job cleanup: {str(e)}")
 
 def process_animation_request(job_id: str, prompt: str):
     try:
