@@ -490,6 +490,11 @@ Requirements:
 14. Create visually appealing animations with smooth transitions
 15. Avoid complex packages and custom LaTeX commands
 16. Only Return the python code and nothing else
+17. Do not import any other packages
+18. Do not import any other modules
+19. Keep animation as simple as possible
+20. Do not use any complex packages
+21. use only texlive-latex-base, texlive-latex-recommended, texlive-latex-extra, texlive-science, texlive-fonts-recommended
 Example:
 ```python
 # Dynamic Wave Function Visualization
