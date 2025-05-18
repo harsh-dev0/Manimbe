@@ -286,7 +286,7 @@ def setup_periodic_cleanup():
     async def periodic_cleanup():
         while True:
             await run_in_threadpool(cleanup_old_jobs)
-            await asyncio.sleep(3600)  # Run cleanup every hour
+            await asyncio.sleep(600)  # Run cleanup every hour
     
     asyncio.create_task(periodic_cleanup())
 
