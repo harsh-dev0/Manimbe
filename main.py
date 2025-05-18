@@ -27,7 +27,7 @@ app = FastAPI(title="VisuaMath Forge API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://manimai.vercel.app"],
+    allow_origins=["https://manimai.vercel.app", "http://localhost:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -310,60 +310,69 @@ def process_animation_request(job_id: str, prompt: str):
         
         # Create the animation video
         video_result = create_video(job_id, code_file_path)
+        logger.info(f"Video creation result: {video_result}")
         
         # Handle video storage (local or S3)
-        output_path = MEDIA_DIR / f"{job_id}.mp4"
-        if os.path.exists(output_path):
-            try:
-                # Get AWS credentials from environment variables
-                aws_access_key = os.environ.get("AWS_ACCESS_KEY_ID")
-                aws_secret_key = os.environ.get("AWS_SECRET_ACCESS_KEY")
-                bucket_name = os.environ.get("S3_BUCKET_NAME")
-                aws_region = os.environ.get("AWS_REGION", "us-east-1")
-                
-                if aws_access_key and aws_secret_key and bucket_name:
-                    logger.info(f"S3 upload: Credentials found, uploading to bucket {bucket_name}")
+        if video_result and isinstance(video_result, dict) and "local_path" in video_result:
+            video_path = video_result["local_path"]
+            output_path = Path(video_path)
+            
+            # Check if S3 URL is already available from create_video
+            if "s3_url" in video_result:
+                video_url = video_result["s3_url"]
+                logger.info(f"Using S3 URL from create_video: {video_url}")
+            else:
+                # Try to upload to S3 if not already done
+                try:
+                    # Get AWS credentials from environment variables
+                    aws_access_key = os.environ.get("AWS_ACCESS_KEY_ID")
+                    aws_secret_key = os.environ.get("AWS_SECRET_ACCESS_KEY")
+                    bucket_name = os.environ.get("S3_BUCKET_NAME")
+                    aws_region = os.environ.get("AWS_REGION", "us-east-1")
                     
-                    # Initialize S3 client
-                    import boto3
-                    s3_client = boto3.client(
-                        's3',
-                        aws_access_key_id=aws_access_key,
-                        aws_secret_access_key=aws_secret_key,
-                        region_name=aws_region
-                    )
-                    
-                    # Upload to S3
-                    s3_key = f"videos/{job_id}.mp4"
-                    logger.info(f"S3 upload: Uploading {output_path} to {bucket_name}/{s3_key}")
-                    
-                    with open(str(output_path), 'rb') as data:
-                        s3_client.put_object(
-                            Bucket=bucket_name,
-                            Key=s3_key,
-                            Body=data,
-                            ContentType='video/mp4'
+                    if aws_access_key and aws_secret_key and bucket_name and os.path.exists(output_path):
+                        logger.info(f"S3 upload: Credentials found, uploading to bucket {bucket_name}")
+                        
+                        # Initialize S3 client
+                        import boto3
+                        s3_client = boto3.client(
+                            's3',
+                            aws_access_key_id=aws_access_key,
+                            aws_secret_access_key=aws_secret_key,
+                            region_name=aws_region
                         )
-                    logger.info(f"S3 upload: Direct put_object completed successfully")
-                    
-                    # Generate the URL
-                    s3_url = f"https://{bucket_name}.s3.amazonaws.com/{s3_key}"
-                    logger.info(f"S3 upload: Success! URL: {s3_url}")
-                    video_url = s3_url
-                    video_path = str(output_path)
-                else:
-                    logger.warning(f"S3 upload: AWS credentials not found, using local URL")
+                        
+                        # Upload to S3
+                        s3_key = f"videos/{job_id}.mp4"
+                        logger.info(f"S3 upload: Uploading {output_path} to {bucket_name}/{s3_key}")
+                        
+                        with open(str(output_path), 'rb') as data:
+                            s3_client.put_object(
+                                Bucket=bucket_name,
+                                Key=s3_key,
+                                Body=data,
+                                ContentType='video/mp4'
+                            )
+                        logger.info(f"S3 upload: Direct put_object completed successfully")
+                        
+                        # Generate the URL
+                        s3_url = f"https://{bucket_name}.s3.amazonaws.com/{s3_key}"
+                        logger.info(f"S3 upload: Success! URL: {s3_url}")
+                        video_url = s3_url
+                    else:
+                        logger.warning(f"S3 upload: AWS credentials not found or file doesn't exist, using local URL")
+                        video_url = f"/media/{job_id}.mp4"
+                except Exception as e:
+                    logger.error(f"S3 upload error: {str(e)}")
+                    import traceback
+                    logger.error(f"S3 upload error details:\n{traceback.format_exc()}")
                     video_url = f"/media/{job_id}.mp4"
-                    video_path = str(output_path)
-            except Exception as e:
-                logger.error(f"S3 upload error: {str(e)}")
-                import traceback
-                logger.error(f"S3 upload error details:\n{traceback.format_exc()}")
-                video_url = f"/media/{job_id}.mp4"
-                video_path = str(output_path)
         else:
+            logger.error(f"Invalid video result: {video_result}")
             video_url = f"/media/{job_id}.mp4"
-            video_path = video_result["local_path"] if isinstance(video_result, dict) else str(video_result)
+            video_path = str(MEDIA_DIR / f"{job_id}.mp4")
+            # Create an empty file as a last resort
+            Path(video_path).touch()
         
         logger.info(f"Final video URL: {video_url}")
         generation_jobs[job_id].update({
@@ -378,34 +387,28 @@ def process_animation_request(job_id: str, prompt: str):
         error_message = str(e)
         logger.error(f"Error processing animation request: {error_message}")
         
-        generation_jobs[job_id].update({
-            "status": "failed",
-            "error": error_message,
-            "completed_at": time.time()
-        })
-        save_job(job_id, generation_jobs[job_id])
-        logger.info(f"Animation generation completed for job {job_id}")
-        
-    except Exception as e:
-        logger.error(f"Error processing animation for job {job_id}: {str(e)}")
-        
-        error_data = {
-            "status": "failed",
-            "error": str(e)
-        }
-        
+        # Make sure we have a title variable defined
+        if 'title' not in locals():
+            title = None
+            
+        # Update job with error status
         if job_id in generation_jobs:
-            generation_jobs[job_id].update(error_data)
+            generation_jobs[job_id].update({
+                "status": "failed",
+                "error": error_message,
+                "completed_at": time.time()
+            })
         else:
             generation_jobs[job_id] = {
                 "status": "failed",
                 "created_at": time.time(),
                 "prompt": prompt,
-                "error": str(e),
-                "title": title if 'title' in locals() else None
+                "error": error_message,
+                "title": title
             }
             
         save_job(job_id, generation_jobs[job_id])
+        logger.info(f"Animation generation failed for job {job_id}")
 
 def generate_manim_code(prompt: str):
     """Generate Manim code using AI with fallback to API error demo"""
@@ -780,16 +783,43 @@ scene.render()
 def create_dummy_video(job_id: str, error_message: str):
     dummy_video_path = MEDIA_DIR / f"{job_id}.mp4"
     try:
+        # Sanitize error message to avoid FFmpeg command injection
+        safe_error = error_message.replace("'", "").replace('"', "").replace(":", "-")[:100]
+        
+        # Create a friendly message about resource exhaustion
+        main_text = "Oops! Animation Too Complex"
+        error_text = "Our math hamsters got tired running on their wheels!"
+        help_text = "Try a simpler animation or break it into smaller parts"
+        
+        logger.info(f"Creating dummy error video for job {job_id}")
         ffmpeg_cmd = [
             "ffmpeg", "-y", "-f", "lavfi", "-i", "color=c=rgb(25,25,40):s=1280x720:d=10",
-            "-vf", f"drawtext=text='Error Creating Animation':fontcolor=white:fontsize=40:x=(w-text_w)/2:y=100,drawtext=text='{error_message}':fontcolor=red:fontsize=24:x=(w-text_w)/2:y=200",
+            "-vf", f"drawtext=text='{main_text}':fontcolor=white:fontsize=40:x=(w-text_w)/2:y=100," + 
+                   f"drawtext=text='{error_text}':fontcolor=yellow:fontsize=30:x=(w-text_w)/2:y=200," +
+                   f"drawtext=text='{help_text}':fontcolor=cyan:fontsize=24:x=(w-text_w)/2:y=300," +
+                   f"drawtext=text='Error details: {safe_error}':fontcolor=red:fontsize=18:x=(w-text_w)/2:y=400",
             "-c:v", "libx264", "-pix_fmt", "yuv420p", str(dummy_video_path)
         ]
-        subprocess.run(ffmpeg_cmd, check=True, capture_output=True)
-        return dummy_video_path
-    except Exception:
+        
+        logger.info(f"Running FFmpeg command for error video")
+        result = subprocess.run(ffmpeg_cmd, check=False, capture_output=True, text=True)
+        
+        if result.returncode != 0:
+            logger.error(f"FFmpeg error: {result.stderr}")
+            # Create a text file with the error instead
+            with open(dummy_video_path.with_suffix('.txt'), 'w') as f:
+                f.write(f"Error creating animation: {error_message}\nFFmpeg error: {result.stderr}")
+            # Still create an empty MP4 file so the API can return something
+            dummy_video_path.touch()
+        else:
+            logger.info(f"Successfully created dummy error video at {dummy_video_path}")
+            
+        # Return in the same format as create_video
+        return {"local_path": str(dummy_video_path)}
+    except Exception as e:
+        logger.error(f"Failed to create dummy video: {str(e)}")
         dummy_video_path.touch()
-        return dummy_video_path
+        return {"local_path": str(dummy_video_path)}
 
 if __name__ == "__main__":
     import uvicorn
