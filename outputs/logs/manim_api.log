@@ -1,0 +1,895 @@
+2025-05-18 16:00:02,030 - main - INFO - S3 storage initialized: True
+2025-05-18 16:00:02,031 - main - INFO - S3 bucket configured: manim-ai-videos
+2025-05-18 16:00:02,282 - main - INFO - Anthropic client initialized successfully
+2025-05-18 16:00:03,699 - main - INFO - Received exit signal 2. Cleaning up and shutting down...
+2025-05-18 16:00:05,115 - main - INFO - S3 storage initialized: True
+2025-05-18 16:00:05,115 - main - INFO - S3 bucket configured: manim-ai-videos
+2025-05-18 16:00:05,350 - main - INFO - Anthropic client initialized successfully
+2025-05-18 16:00:45,004 - main - INFO - Saved job ead26559-63d5-458d-9be4-2523a4297460 to disk
+2025-05-18 16:00:45,035 - main - INFO - Processing animation request: ead26559-63d5-458d-9be4-2523a4297460, prompt: Create a cinematic 3D animation visualizing the formation of a black hole from a collapsing massive star. Begin with a rotating 3D model of a star with animated plasma waves and solar flares using particle systems. As the star collapses, show spacetime curvature with dynamically morphing grid lines and a gravity well forming underneath. Add surrounding orbiting celestial bodies spiraling inward. As the black hole forms, animate an accretion disk with motion blur and lens flare effects. Include real-time plotted graphs of temperature and gravitational force on the side, updating as the collapse progresses. Zoom the camera in and out with easing transitions, and use dynamic lighting to simulate relativistic effects. Overlay dramatic captions with synced music cues to match key transformation moments.
+2025-05-18 16:00:45,039 - main - INFO - Saved job ead26559-63d5-458d-9be4-2523a4297460 to disk
+2025-05-18 16:00:45,040 - main - INFO - Generating code with Anthropic Claude
+2025-05-18 16:00:48,535 - main - INFO - Status check requested for job: ead26559-63d5-458d-9be4-2523a4297460
+2025-05-18 16:00:48,535 - main - INFO - Current jobs in memory: ['ead26559-63d5-458d-9be4-2523a4297460']
+2025-05-18 16:00:51,539 - main - INFO - Status check requested for job: ead26559-63d5-458d-9be4-2523a4297460
+2025-05-18 16:00:51,541 - main - INFO - Current jobs in memory: ['ead26559-63d5-458d-9be4-2523a4297460']
+2025-05-18 16:00:54,526 - main - INFO - Status check requested for job: ead26559-63d5-458d-9be4-2523a4297460
+2025-05-18 16:00:54,527 - main - INFO - Current jobs in memory: ['ead26559-63d5-458d-9be4-2523a4297460']
+2025-05-18 16:00:57,533 - main - INFO - Status check requested for job: ead26559-63d5-458d-9be4-2523a4297460
+2025-05-18 16:00:57,533 - main - INFO - Current jobs in memory: ['ead26559-63d5-458d-9be4-2523a4297460']
+2025-05-18 16:00:59,998 - main - INFO - Successfully generated valid Manim code with Claude
+2025-05-18 16:01:00,002 - main - INFO - Saved job ead26559-63d5-458d-9be4-2523a4297460 to disk
+2025-05-18 16:01:00,253 - main - INFO - Received exit signal 2. Cleaning up and shutting down...
+2025-05-18 16:01:01,306 - main - INFO - Process stdout: 
+2025-05-18 16:01:01,306 - main - ERROR - Process stderr: C:\Users\harsh\AppData\Local\Programs\Python\Python311\Lib\site-packages\pydub\utils.py:170: RuntimeWarning: Couldn't find ffmpeg or avconv - defaulting to ffmpeg, but may not work
+  warn("Couldn't find ffmpeg or avconv - defaulting to ffmpeg, but may not work", RuntimeWarning)
+Traceback (most recent call last):
+  File "C:\Users\harsh\Desktop\projects\Startups\aws\Manim-Backend\outputs\code\run_ead26559-63d5-458d-9be4-2523a4297460.py", line 10, in <module>
+    from manim_scene_ead26559_63d5_458d_9be4_2523a4297460 import StellarCollapse
+  File "C:\Users\harsh\Desktop\projects\Startups\aws\Manim-Backend\outputs\code\manim_scene_ead26559_63d5_458d_9be4_2523a4297460.py", line 3
+    However, I can provide a simplified 2D Manim animation that captures some key conceptual elements of stellar collapse:
+                                        ^
+SyntaxError: invalid decimal literal
+
+2025-05-18 16:01:01,307 - main - ERROR - Error creating video: Render failed: C:\Users\harsh\AppData\Local\Programs\Python\Python311\Lib\site-packages\pydub\utils.py:170: RuntimeWarning: Couldn't find ffmpeg or avconv - defaulting to ffmpeg, but may not work
+  warn("Couldn't find ffmpeg or avconv - defaulting to ffmpeg, but may not work", RuntimeWarning)
+Traceback (most recent call last):
+  File "C:\Users\harsh\Desktop\projects\Startups\aws\Manim-Backend\outputs\code\run_ead26559-63d5-458d-9be4-2523a4297460.py", line 10, in <module>
+    from manim_scene_ead26559_63d5_458d_9be4_2523a4297460 import StellarCollapse
+  File "C:\Users\harsh\Desktop\projects\Startups\aws\Manim-Backend\outputs\code\manim_scene_ead26559_63d5_458d_9be4_2523a4297460.py", line 3
+    However, I can provide a simplified 2D Manim animation that captures some key conceptual elements of stellar collapse:
+                                        ^
+SyntaxError: invalid decimal literal
+
+2025-05-18 16:01:01,308 - main - INFO - Using direct error video URL for job ead26559-63d5-458d-9be4-2523a4297460: https://manim-ai-videos.s3.us-east-1.amazonaws.com/videos/ec808a73-d0e8-4573-9057-5c1580fa1e11.mp4
+2025-05-18 16:01:01,308 - main - INFO - Video creation result: {'local_path': 'outputs\\media\\ead26559-63d5-458d-9be4-2523a4297460.mp4', 's3_url': 'https://manim-ai-videos.s3.us-east-1.amazonaws.com/videos/ec808a73-d0e8-4573-9057-5c1580fa1e11.mp4'}
+2025-05-18 16:01:01,308 - main - INFO - Using S3 URL from create_video: https://manim-ai-videos.s3.us-east-1.amazonaws.com/videos/ec808a73-d0e8-4573-9057-5c1580fa1e11.mp4
+2025-05-18 16:01:01,308 - main - INFO - Final video URL: https://manim-ai-videos.s3.us-east-1.amazonaws.com/videos/ec808a73-d0e8-4573-9057-5c1580fa1e11.mp4
+2025-05-18 16:01:01,308 - main - INFO - Saved job ead26559-63d5-458d-9be4-2523a4297460 to disk
+2025-05-18 16:01:02,751 - main - INFO - S3 storage initialized: True
+2025-05-18 16:01:02,752 - main - INFO - S3 bucket configured: manim-ai-videos
+2025-05-18 16:01:03,013 - main - INFO - Anthropic client initialized successfully
+2025-05-18 16:01:03,019 - main - INFO - Loaded job ead26559-63d5-458d-9be4-2523a4297460 from disk
+2025-05-18 16:01:04,275 - main - INFO - S3 storage initialized: True
+2025-05-18 16:01:04,275 - main - INFO - S3 bucket configured: manim-ai-videos
+2025-05-18 16:01:04,521 - main - INFO - Anthropic client initialized successfully
+2025-05-18 16:01:04,527 - main - INFO - Loaded job ead26559-63d5-458d-9be4-2523a4297460 from disk
+2025-05-18 16:01:04,529 - main - INFO - Status check requested for job: ead26559-63d5-458d-9be4-2523a4297460
+2025-05-18 16:01:04,530 - main - INFO - Current jobs in memory: ['ead26559-63d5-458d-9be4-2523a4297460']
+2025-05-18 16:01:21,017 - main - INFO - Saved job 54658afe-6932-424b-9d47-3aa5d8158e63 to disk
+2025-05-18 16:01:21,022 - main - INFO - Processing animation request: 54658afe-6932-424b-9d47-3aa5d8158e63, prompt: FORCE_API_CREDIT_EXHAUSTED_TEST
+2025-05-18 16:01:21,022 - main - INFO - Saved job 54658afe-6932-424b-9d47-3aa5d8158e63 to disk
+2025-05-18 16:01:21,022 - main - INFO - Generating code with Anthropic Claude
+2025-05-18 16:01:23,069 - main - INFO - Status check requested for job: 54658afe-6932-424b-9d47-3aa5d8158e63
+2025-05-18 16:01:23,069 - main - INFO - Current jobs in memory: ['ead26559-63d5-458d-9be4-2523a4297460', '54658afe-6932-424b-9d47-3aa5d8158e63']
+2025-05-18 16:01:25,885 - main - WARNING - Claude generated code missing required elements, trying Groq or fallback
+2025-05-18 16:01:25,888 - main - WARNING - No working LLM API found, using API error fallback
+2025-05-18 16:01:25,888 - main - WARNING - AI generation failed or not available, using direct API error video URL
+2025-05-18 16:01:25,889 - main - INFO - Saved job 54658afe-6932-424b-9d47-3aa5d8158e63 to disk
+2025-05-18 16:01:25,890 - main - INFO - Saved job 54658afe-6932-424b-9d47-3aa5d8158e63 to disk
+2025-05-18 16:01:25,890 - main - INFO - Using direct URL for job 54658afe-6932-424b-9d47-3aa5d8158e63: https://manim-ai-videos.s3.us-east-1.amazonaws.com/videos/0251cdf9-76dc-4484-85d7-85dd8252ea89.mp4
+2025-05-18 16:01:25,890 - main - INFO - Using S3 URL from create_video: https://manim-ai-videos.s3.us-east-1.amazonaws.com/videos/0251cdf9-76dc-4484-85d7-85dd8252ea89.mp4
+2025-05-18 16:01:25,890 - main - INFO - Final video URL: https://manim-ai-videos.s3.us-east-1.amazonaws.com/videos/0251cdf9-76dc-4484-85d7-85dd8252ea89.mp4
+2025-05-18 16:01:25,891 - main - INFO - Saved job 54658afe-6932-424b-9d47-3aa5d8158e63 to disk
+2025-05-18 16:01:25,962 - main - INFO - Received exit signal 2. Cleaning up and shutting down...
+2025-05-18 16:01:27,270 - main - INFO - S3 storage initialized: True
+2025-05-18 16:01:27,270 - main - INFO - S3 bucket configured: manim-ai-videos
+2025-05-18 16:01:27,530 - main - INFO - Anthropic client initialized successfully
+2025-05-18 16:01:27,534 - main - INFO - Loaded job 54658afe-6932-424b-9d47-3aa5d8158e63 from disk
+2025-05-18 16:01:27,535 - main - INFO - Loaded job ead26559-63d5-458d-9be4-2523a4297460 from disk
+2025-05-18 16:01:27,536 - main - INFO - Status check requested for job: 54658afe-6932-424b-9d47-3aa5d8158e63
+2025-05-18 16:01:27,536 - main - INFO - Current jobs in memory: ['54658afe-6932-424b-9d47-3aa5d8158e63', 'ead26559-63d5-458d-9be4-2523a4297460']
+2025-05-18 16:01:29,584 - main - INFO - Saved job ec7ca6c3-b8fe-4ded-8e96-9016889a3479 to disk
+2025-05-18 16:01:29,590 - main - INFO - Processing animation request: ec7ca6c3-b8fe-4ded-8e96-9016889a3479, prompt: FORCE_ERROR_SCENARIO_TEST
+2025-05-18 16:01:29,591 - main - INFO - Saved job ec7ca6c3-b8fe-4ded-8e96-9016889a3479 to disk
+2025-05-18 16:01:29,593 - main - INFO - Generating code with Anthropic Claude
+2025-05-18 16:01:31,627 - main - INFO - Status check requested for job: ec7ca6c3-b8fe-4ded-8e96-9016889a3479
+2025-05-18 16:01:31,627 - main - INFO - Current jobs in memory: ['54658afe-6932-424b-9d47-3aa5d8158e63', 'ead26559-63d5-458d-9be4-2523a4297460', 'ec7ca6c3-b8fe-4ded-8e96-9016889a3479']
+2025-05-18 16:01:34,686 - main - INFO - Status check requested for job: ec7ca6c3-b8fe-4ded-8e96-9016889a3479
+2025-05-18 16:01:34,686 - main - INFO - Current jobs in memory: ['54658afe-6932-424b-9d47-3aa5d8158e63', 'ead26559-63d5-458d-9be4-2523a4297460', 'ec7ca6c3-b8fe-4ded-8e96-9016889a3479']
+2025-05-18 16:01:35,812 - main - INFO - Successfully generated valid Manim code with Claude
+2025-05-18 16:01:35,813 - main - INFO - Saved job ec7ca6c3-b8fe-4ded-8e96-9016889a3479 to disk
+2025-05-18 16:01:35,949 - main - INFO - Received exit signal 2. Cleaning up and shutting down...
+2025-05-18 16:01:41,523 - main - INFO - Process stdout: [05/18/25 16:01:38] INFO     Animation 0 : Partial     scene_file_writer.py:588
+                             movie file written in                             
+                             'C:\Users\harsh\Desktop\p                         
+                             rojects\Startups\aws\Mani                         
+                             m-Backend\outputs\media\p                         
+                             artial_movie_files\ForceE                         
+                             rrorScenario\2016333726_2                         
+                             419926526_223132457.mp4'                          
+                    INFO     Animation 1 : Partial     scene_file_writer.py:588
+                             movie file written in                             
+                             'C:\Users\harsh\Desktop\p                         
+                             rojects\Startups\aws\Mani                         
+                             m-Backend\outputs\media\p                         
+                             artial_movie_files\ForceE                         
+                             rrorScenario\543634251_33                         
+                             94500337_3372236458.mp4'                          
+                    INFO     Animation 2 : Partial     scene_file_writer.py:588
+                             movie file written in                             
+                             'C:\Users\harsh\Desktop\p                         
+                             rojects\Startups\aws\Mani                         
+                             m-Backend\outputs\media\p                         
+                             artial_movie_files\ForceE                         
+                             rrorScenario\543634251_10                         
+                             35506982_1881007557.mp4'                          
+[05/18/25 16:01:40] INFO     Animation 3 : Partial     scene_file_writer.py:588
+                             movie file written in                             
+                             'C:\Users\harsh\Desktop\p                         
+                             rojects\Startups\aws\Mani                         
+                             m-Backend\outputs\media\p                         
+                             artial_movie_files\ForceE                         
+                             rrorScenario\543634251_26                         
+                             69215215_1080373480.mp4'                          
+                    INFO     Animation 4 : Partial     scene_file_writer.py:588
+                             movie file written in                             
+                             'C:\Users\harsh\Desktop\p                         
+                             rojects\Startups\aws\Mani                         
+                             m-Backend\outputs\media\p                         
+                             artial_movie_files\ForceE                         
+                             rrorScenario\543634251_59                         
+                             1095486_1042404043.mp4'                           
+[05/18/25 16:01:41] INFO     Animation 5 : Partial     scene_file_writer.py:588
+                             movie file written in                             
+                             'C:\Users\harsh\Desktop\p                         
+                             rojects\Startups\aws\Mani                         
+                             m-Backend\outputs\media\p                         
+                             artial_movie_files\ForceE                         
+                             rrorScenario\543634251_42                         
+                             17992463_288855156.mp4'                           
+                    INFO     Combining to Movie file.  scene_file_writer.py:739
+                    INFO                               scene_file_writer.py:886
+                             File ready at                                     
+                             'C:\Users\harsh\Desktop\p                         
+                             rojects\Startups\aws\Mani                         
+                             m-Backend\outputs\media\e                         
+                             c7ca6c3-b8fe-4ded-8e96-90                         
+                             16889a3479.mp4'                                   
+                                                                               
+                    INFO     Rendered ForceErrorScenario           scene.py:255
+                             Played 6 animations                               
+
+2025-05-18 16:01:41,525 - main - ERROR - Process stderr: C:\Users\harsh\AppData\Local\Programs\Python\Python311\Lib\site-packages\pydub\utils.py:170: RuntimeWarning: Couldn't find ffmpeg or avconv - defaulting to ffmpeg, but may not work
+  warn("Couldn't find ffmpeg or avconv - defaulting to ffmpeg, but may not work", RuntimeWarning)
+
+Animation 0: Write(Text('Force Error Scenario Analysis')):   0%|          | 0/60 [00:00<?, ?it/s]
+Animation 0: Write(Text('Force Error Scenario Analysis')):  25%|##5       | 15/60 [00:00<00:00, 149.23it/s]
+Animation 0: Write(Text('Force Error Scenario Analysis')):  52%|#####1    | 31/60 [00:00<00:00, 150.48it/s]
+Animation 0: Write(Text('Force Error Scenario Analysis')):  78%|#######8  | 47/60 [00:00<00:00, 131.85it/s]
+                                                                                                           
+
+Animation 2: Create(Rectangle):   0%|          | 0/30 [00:00<?, ?it/s]
+                                                                      
+
+Animation 3: Write(Text('Potential Error Zones\n- Input Validation\n- Boundary Conditions\n- Unexpected Inputs')):   0%|          | 0/60 [00:00<?, ?it/s]
+Animation 3: Write(Text('Potential Error Zones\n- Input Validation\n- Boundary Conditions\n- Unexpected Inputs')):  18%|#8        | 11/60 [00:00<00:00, 106.64it/s]
+Animation 3: Write(Text('Potential Error Zones\n- Input Validation\n- Boundary Conditions\n- Unexpected Inputs')):  37%|###6      | 22/60 [00:00<00:00, 95.80it/s] 
+Animation 3: Write(Text('Potential Error Zones\n- Input Validation\n- Boundary Conditions\n- Unexpected Inputs')):  53%|#####3    | 32/60 [00:00<00:00, 89.18it/s]
+Animation 3: Write(Text('Potential Error Zones\n- Input Validation\n- Boundary Conditions\n- Unexpected Inputs')):  68%|######8   | 41/60 [00:00<00:00, 81.57it/s]
+Animation 3: Write(Text('Potential Error Zones\n- Input Validation\n- Boundary Conditions\n- Unexpected Inputs')):  83%|########3 | 50/60 [00:00<00:00, 69.08it/s]
+Animation 3: Write(Text('Potential Error Zones\n- Input Validation\n- Boundary Conditions\n- Unexpected Inputs')):  97%|#########6| 58/60 [00:00<00:00, 64.63it/s]
+                                                                                                                                                                  
+
+Animation 4: Create(Arrow), etc.:   0%|          | 0/30 [00:00<?, ?it/s]
+                                                                        
+
+2025-05-18 16:01:41,527 - main - INFO - Found rendered video at outputs\media\ec7ca6c3-b8fe-4ded-8e96-9016889a3479.mp4
+2025-05-18 16:01:41,527 - main - INFO - S3 storage enabled in create_video: True
+2025-05-18 16:01:41,527 - main - INFO - S3 bucket name in create_video: manim-ai-videos
+2025-05-18 16:01:41,527 - main - INFO - Attempting to upload video to S3: outputs\media\ec7ca6c3-b8fe-4ded-8e96-9016889a3479.mp4
+2025-05-18 16:01:41,528 - main - INFO - S3 upload result: None
+2025-05-18 16:01:41,528 - main - INFO - Video creation result: {'local_path': 'outputs\\media\\ec7ca6c3-b8fe-4ded-8e96-9016889a3479.mp4'}
+2025-05-18 16:01:41,528 - main - INFO - S3 upload: Credentials found, uploading to bucket manim-ai-videos
+2025-05-18 16:01:41,534 - main - INFO - S3 upload: Uploading outputs\media\ec7ca6c3-b8fe-4ded-8e96-9016889a3479.mp4 to manim-ai-videos/videos/ec7ca6c3-b8fe-4ded-8e96-9016889a3479.mp4
+2025-05-18 16:01:43,755 - main - INFO - S3 upload: Direct put_object completed successfully
+2025-05-18 16:01:43,756 - main - INFO - S3 upload: Success! URL: https://manim-ai-videos.s3.amazonaws.com/videos/ec7ca6c3-b8fe-4ded-8e96-9016889a3479.mp4
+2025-05-18 16:01:43,756 - main - INFO - Final video URL: https://manim-ai-videos.s3.amazonaws.com/videos/ec7ca6c3-b8fe-4ded-8e96-9016889a3479.mp4
+2025-05-18 16:01:43,756 - main - INFO - Saved job ec7ca6c3-b8fe-4ded-8e96-9016889a3479 to disk
+2025-05-18 16:01:45,224 - main - INFO - S3 storage initialized: True
+2025-05-18 16:01:45,226 - main - INFO - S3 bucket configured: manim-ai-videos
+2025-05-18 16:01:45,496 - main - INFO - Anthropic client initialized successfully
+2025-05-18 16:01:45,500 - main - INFO - Loaded job 54658afe-6932-424b-9d47-3aa5d8158e63 from disk
+2025-05-18 16:01:45,501 - main - INFO - Loaded job ead26559-63d5-458d-9be4-2523a4297460 from disk
+2025-05-18 16:01:45,501 - main - INFO - Loaded job ec7ca6c3-b8fe-4ded-8e96-9016889a3479 from disk
+2025-05-18 16:01:46,934 - main - INFO - S3 storage initialized: True
+2025-05-18 16:01:46,934 - main - INFO - S3 bucket configured: manim-ai-videos
+2025-05-18 16:01:47,197 - main - INFO - Anthropic client initialized successfully
+2025-05-18 16:01:47,203 - main - INFO - Loaded job 54658afe-6932-424b-9d47-3aa5d8158e63 from disk
+2025-05-18 16:01:47,203 - main - INFO - Loaded job ead26559-63d5-458d-9be4-2523a4297460 from disk
+2025-05-18 16:01:47,203 - main - INFO - Loaded job ec7ca6c3-b8fe-4ded-8e96-9016889a3479 from disk
+2025-05-18 16:02:02,004 - main - INFO - Saved job f4913a19-4452-4e7c-ac31-ad2c3b4e54aa to disk
+2025-05-18 16:02:02,014 - main - INFO - Processing animation request: f4913a19-4452-4e7c-ac31-ad2c3b4e54aa, prompt: Binary Search
+2025-05-18 16:02:02,017 - main - INFO - Saved job f4913a19-4452-4e7c-ac31-ad2c3b4e54aa to disk
+2025-05-18 16:02:02,020 - main - INFO - Generating code with Anthropic Claude
+2025-05-18 16:02:05,013 - main - INFO - Status check requested for job: f4913a19-4452-4e7c-ac31-ad2c3b4e54aa
+2025-05-18 16:02:05,014 - main - INFO - Current jobs in memory: ['54658afe-6932-424b-9d47-3aa5d8158e63', 'ead26559-63d5-458d-9be4-2523a4297460', 'ec7ca6c3-b8fe-4ded-8e96-9016889a3479', 'f4913a19-4452-4e7c-ac31-ad2c3b4e54aa']
+2025-05-18 16:02:08,533 - main - INFO - Status check requested for job: f4913a19-4452-4e7c-ac31-ad2c3b4e54aa
+2025-05-18 16:02:08,539 - main - INFO - Current jobs in memory: ['54658afe-6932-424b-9d47-3aa5d8158e63', 'ead26559-63d5-458d-9be4-2523a4297460', 'ec7ca6c3-b8fe-4ded-8e96-9016889a3479', 'f4913a19-4452-4e7c-ac31-ad2c3b4e54aa']
+2025-05-18 16:02:11,532 - main - INFO - Status check requested for job: f4913a19-4452-4e7c-ac31-ad2c3b4e54aa
+2025-05-18 16:02:11,532 - main - INFO - Current jobs in memory: ['54658afe-6932-424b-9d47-3aa5d8158e63', 'ead26559-63d5-458d-9be4-2523a4297460', 'ec7ca6c3-b8fe-4ded-8e96-9016889a3479', 'f4913a19-4452-4e7c-ac31-ad2c3b4e54aa']
+2025-05-18 16:02:12,966 - main - INFO - Successfully generated valid Manim code with Claude
+2025-05-18 16:02:12,967 - main - INFO - Saved job f4913a19-4452-4e7c-ac31-ad2c3b4e54aa to disk
+2025-05-18 16:02:13,162 - main - INFO - Received exit signal 2. Cleaning up and shutting down...
+2025-05-18 16:02:22,048 - main - INFO - Process stdout: [05/18/25 16:02:15] INFO     Animation 0 : Partial     scene_file_writer.py:588
+                             movie file written in                             
+                             'C:\Users\harsh\Desktop\p                         
+                             rojects\Startups\aws\Mani                         
+                             m-Backend\outputs\media\p                         
+                             artial_movie_files\Binary                         
+                             Search\2016333726_1118927                         
+                             484_223132457.mp4'                                
+[05/18/25 16:02:16] INFO     Animation 1 : Partial     scene_file_writer.py:588
+                             movie file written in                             
+                             'C:\Users\harsh\Desktop\p                         
+                             rojects\Startups\aws\Mani                         
+                             m-Backend\outputs\media\p                         
+                             artial_movie_files\Binary                         
+                             Search\543634251_31667287                         
+                             99_256052026.mp4'                                 
+                    INFO     Animation 2 : Partial     scene_file_writer.py:588
+                             movie file written in                             
+                             'C:\Users\harsh\Desktop\p                         
+                             rojects\Startups\aws\Mani                         
+                             m-Backend\outputs\media\p                         
+                             artial_movie_files\Binary                         
+                             Search\543634251_42179924                         
+                             63_821334385.mp4'                                 
+[05/18/25 16:02:17] INFO     Animation 3 : Partial     scene_file_writer.py:588
+                             movie file written in                             
+                             'C:\Users\harsh\Desktop\p                         
+                             rojects\Startups\aws\Mani                         
+                             m-Backend\outputs\media\p                         
+                             artial_movie_files\Binary                         
+                             Search\543634251_21597127                         
+                             28_4253685338.mp4'                                
+                    INFO     Animation 4 : Partial     scene_file_writer.py:588
+                             movie file written in                             
+                             'C:\Users\harsh\Desktop\p                         
+                             rojects\Startups\aws\Mani                         
+                             m-Backend\outputs\media\p                         
+                             artial_movie_files\Binary                         
+                             Search\543634251_33945003                         
+                             37_597819965.mp4'                                 
+                    INFO     Animation 5 : Partial     scene_file_writer.py:588
+                             movie file written in                             
+                             'C:\Users\harsh\Desktop\p                         
+                             rojects\Startups\aws\Mani                         
+                             m-Backend\outputs\media\p                         
+                             artial_movie_files\Binary                         
+                             Search\543634251_35275747                         
+                             81_1626966537.mp4'                                
+                    INFO     Animation 6 : Partial     scene_file_writer.py:588
+                             movie file written in                             
+                             'C:\Users\harsh\Desktop\p                         
+                             rojects\Startups\aws\Mani                         
+                             m-Backend\outputs\media\p                         
+                             artial_movie_files\Binary                         
+                             Search\543634251_33945003                         
+                             37_1303956714.mp4'                                
+[05/18/25 16:02:18] INFO     Animation 7 : Partial     scene_file_writer.py:588
+                             movie file written in                             
+                             'C:\Users\harsh\Desktop\p                         
+                             rojects\Startups\aws\Mani                         
+                             m-Backend\outputs\media\p                         
+                             artial_movie_files\Binary                         
+                             Search\543634251_20810161                         
+                             2_276387179.mp4'                                  
+                    INFO     Animation 8 : Partial     scene_file_writer.py:588
+                             movie file written in                             
+                             'C:\Users\harsh\Desktop\p                         
+                             rojects\Startups\aws\Mani                         
+                             m-Backend\outputs\media\p                         
+                             artial_movie_files\Binary                         
+                             Search\543634251_33945003                         
+                             37_2568019312.mp4'                                
+[05/18/25 16:02:19] INFO     Animation 9 : Partial     scene_file_writer.py:588
+                             movie file written in                             
+                             'C:\Users\harsh\Desktop\p                         
+                             rojects\Startups\aws\Mani                         
+                             m-Backend\outputs\media\p                         
+                             artial_movie_files\Binary                         
+                             Search\543634251_21696418                         
+                             02_3055122500.mp4'                                
+                    INFO     Animation 10 : Partial    scene_file_writer.py:588
+                             movie file written in                             
+                             'C:\Users\harsh\Desktop\p                         
+                             rojects\Startups\aws\Mani                         
+                             m-Backend\outputs\media\p                         
+                             artial_movie_files\Binary                         
+                             Search\543634251_33945003                         
+                             37_1236289715.mp4'                                
+                    INFO     Animation 11 : Partial    scene_file_writer.py:588
+                             movie file written in                             
+                             'C:\Users\harsh\Desktop\p                         
+                             rojects\Startups\aws\Mani                         
+                             m-Backend\outputs\media\p                         
+                             artial_movie_files\Binary                         
+                             Search\543634251_16191322                         
+                             89_2303670401.mp4'                                
+                    INFO     Animation 12 : Partial    scene_file_writer.py:588
+                             movie file written in                             
+                             'C:\Users\harsh\Desktop\p                         
+                             rojects\Startups\aws\Mani                         
+                             m-Backend\outputs\media\p                         
+                             artial_movie_files\Binary                         
+                             Search\543634251_33945003                         
+                             37_1501853039.mp4'                                
+[05/18/25 16:02:20] INFO     Animation 13 : Partial    scene_file_writer.py:588
+                             movie file written in                             
+                             'C:\Users\harsh\Desktop\p                         
+                             rojects\Startups\aws\Mani                         
+                             m-Backend\outputs\media\p                         
+                             artial_movie_files\Binary                         
+                             Search\543634251_34642618                         
+                             62_4149716874.mp4'                                
+[05/18/25 16:02:21] INFO     Animation 14 : Partial    scene_file_writer.py:588
+                             movie file written in                             
+                             'C:\Users\harsh\Desktop\p                         
+                             rojects\Startups\aws\Mani                         
+                             m-Backend\outputs\media\p                         
+                             artial_movie_files\Binary                         
+                             Search\543634251_31851022                         
+                             14_161777494.mp4'                                 
+                    INFO     Animation 15 : Partial    scene_file_writer.py:588
+                             movie file written in                             
+                             'C:\Users\harsh\Desktop\p                         
+                             rojects\Startups\aws\Mani                         
+                             m-Backend\outputs\media\p                         
+                             artial_movie_files\Binary                         
+                             Search\543634251_42179924                         
+                             63_1170866275.mp4'                                
+                    INFO     Combining to Movie file.  scene_file_writer.py:739
+                    INFO                               scene_file_writer.py:886
+                             File ready at                                     
+                             'C:\Users\harsh\Desktop\p                         
+                             rojects\Startups\aws\Mani                         
+                             m-Backend\outputs\media\f                         
+                             4913a19-4452-4e7c-ac31-ad                         
+                             2c3b4e54aa.mp4'                                   
+                                                                               
+                    INFO     Rendered BinarySearch                 scene.py:255
+                             Played 16 animations                              
+
+2025-05-18 16:02:22,049 - main - ERROR - Process stderr: C:\Users\harsh\AppData\Local\Programs\Python\Python311\Lib\site-packages\pydub\utils.py:170: RuntimeWarning: Couldn't find ffmpeg or avconv - defaulting to ffmpeg, but may not work
+  warn("Couldn't find ffmpeg or avconv - defaulting to ffmpeg, but may not work", RuntimeWarning)
+
+Animation 0: Write(Text('Binary Search Algorithm')), etc.:   0%|          | 0/60 [00:00<?, ?it/s]
+Animation 0: Write(Text('Binary Search Algorithm')), etc.:  25%|##5       | 15/60 [00:00<00:00, 141.80it/s]
+Animation 0: Write(Text('Binary Search Algorithm')), etc.:  50%|#####     | 30/60 [00:00<00:00, 123.70it/s]
+Animation 0: Write(Text('Binary Search Algorithm')), etc.:  72%|#######1  | 43/60 [00:00<00:00, 107.47it/s]
+Animation 0: Write(Text('Binary Search Algorithm')), etc.:  90%|######### | 54/60 [00:00<00:00, 96.58it/s] 
+                                                                                                          
+
+Animation 1: Create(VGroup of 9 submobjects):   0%|          | 0/30 [00:00<?, ?it/s]
+Animation 1: Create(VGroup of 9 submobjects):  63%|######3   | 19/30 [00:00<00:00, 183.31it/s]
+                                                                                              
+
+Animation 3: _MethodAnimation(Square):   0%|          | 0/30 [00:00<?, ?it/s]
+Animation 3: _MethodAnimation(Square):  57%|#####6    | 17/30 [00:00<00:00, 169.16it/s]
+                                                                                       
+
+Animation 5: _MethodAnimation(Square):   0%|          | 0/30 [00:00<?, ?it/s]
+Animation 5: _MethodAnimation(Square):  60%|######    | 18/30 [00:00<00:00, 173.91it/s]
+                                                                                       
+
+Animation 7: _MethodAnimation(Square):   0%|          | 0/30 [00:00<?, ?it/s]
+Animation 7: _MethodAnimation(Square):  67%|######6   | 20/30 [00:00<00:00, 199.49it/s]
+                                                                                       
+
+Animation 9: _MethodAnimation(Square):   0%|          | 0/30 [00:00<?, ?it/s]
+Animation 9: _MethodAnimation(Square):  70%|#######   | 21/30 [00:00<00:00, 205.92it/s]
+                                                                                       
+
+Animation 11: _MethodAnimation(Square):   0%|          | 0/30 [00:00<?, ?it/s]
+Animation 11: _MethodAnimation(Square):  63%|######3   | 19/30 [00:00<00:00, 185.10it/s]
+                                                                                        
+
+Animation 13: _MethodAnimation(Square):   0%|          | 0/30 [00:00<?, ?it/s]
+Animation 13: _MethodAnimation(Square):  60%|######    | 18/30 [00:00<00:00, 172.64it/s]
+                                                                                        
+
+Animation 14: Write(Text('Target 60 found at index 5')):   0%|          | 0/60 [00:00<?, ?it/s]
+Animation 14: Write(Text('Target 60 found at index 5')):  28%|##8       | 17/60 [00:00<00:00, 165.47it/s]
+Animation 14: Write(Text('Target 60 found at index 5')):  57%|#####6    | 34/60 [00:00<00:00, 150.30it/s]
+Animation 14: Write(Text('Target 60 found at index 5')):  83%|########3 | 50/60 [00:00<00:00, 134.14it/s]
+                                                                                                         
+
+2025-05-18 16:02:22,051 - main - INFO - Found rendered video at outputs\media\f4913a19-4452-4e7c-ac31-ad2c3b4e54aa.mp4
+2025-05-18 16:02:22,052 - main - INFO - S3 storage enabled in create_video: True
+2025-05-18 16:02:22,052 - main - INFO - S3 bucket name in create_video: manim-ai-videos
+2025-05-18 16:02:22,052 - main - INFO - Attempting to upload video to S3: outputs\media\f4913a19-4452-4e7c-ac31-ad2c3b4e54aa.mp4
+2025-05-18 16:02:22,053 - main - INFO - S3 upload result: None
+2025-05-18 16:02:22,053 - main - INFO - Video creation result: {'local_path': 'outputs\\media\\f4913a19-4452-4e7c-ac31-ad2c3b4e54aa.mp4'}
+2025-05-18 16:02:22,053 - main - INFO - S3 upload: Credentials found, uploading to bucket manim-ai-videos
+2025-05-18 16:02:22,057 - main - INFO - S3 upload: Uploading outputs\media\f4913a19-4452-4e7c-ac31-ad2c3b4e54aa.mp4 to manim-ai-videos/videos/f4913a19-4452-4e7c-ac31-ad2c3b4e54aa.mp4
+2025-05-18 16:02:24,904 - main - INFO - S3 upload: Direct put_object completed successfully
+2025-05-18 16:02:24,905 - main - INFO - S3 upload: Success! URL: https://manim-ai-videos.s3.amazonaws.com/videos/f4913a19-4452-4e7c-ac31-ad2c3b4e54aa.mp4
+2025-05-18 16:02:24,905 - main - INFO - Final video URL: https://manim-ai-videos.s3.amazonaws.com/videos/f4913a19-4452-4e7c-ac31-ad2c3b4e54aa.mp4
+2025-05-18 16:02:24,906 - main - INFO - Saved job f4913a19-4452-4e7c-ac31-ad2c3b4e54aa to disk
+2025-05-18 16:02:26,318 - main - INFO - S3 storage initialized: True
+2025-05-18 16:02:26,318 - main - INFO - S3 bucket configured: manim-ai-videos
+2025-05-18 16:02:26,577 - main - INFO - Anthropic client initialized successfully
+2025-05-18 16:02:26,582 - main - INFO - Loaded job 54658afe-6932-424b-9d47-3aa5d8158e63 from disk
+2025-05-18 16:02:26,583 - main - INFO - Loaded job ead26559-63d5-458d-9be4-2523a4297460 from disk
+2025-05-18 16:02:26,583 - main - INFO - Loaded job ec7ca6c3-b8fe-4ded-8e96-9016889a3479 from disk
+2025-05-18 16:02:26,583 - main - INFO - Loaded job f4913a19-4452-4e7c-ac31-ad2c3b4e54aa from disk
+2025-05-18 16:02:28,114 - main - INFO - S3 storage initialized: True
+2025-05-18 16:02:28,114 - main - INFO - S3 bucket configured: manim-ai-videos
+2025-05-18 16:02:28,434 - main - INFO - Anthropic client initialized successfully
+2025-05-18 16:02:28,442 - main - INFO - Loaded job 54658afe-6932-424b-9d47-3aa5d8158e63 from disk
+2025-05-18 16:02:28,443 - main - INFO - Loaded job ead26559-63d5-458d-9be4-2523a4297460 from disk
+2025-05-18 16:02:28,443 - main - INFO - Loaded job ec7ca6c3-b8fe-4ded-8e96-9016889a3479 from disk
+2025-05-18 16:02:28,443 - main - INFO - Loaded job f4913a19-4452-4e7c-ac31-ad2c3b4e54aa from disk
+2025-05-18 16:02:28,444 - main - INFO - Status check requested for job: f4913a19-4452-4e7c-ac31-ad2c3b4e54aa
+2025-05-18 16:02:28,445 - main - INFO - Current jobs in memory: ['54658afe-6932-424b-9d47-3aa5d8158e63', 'ead26559-63d5-458d-9be4-2523a4297460', 'ec7ca6c3-b8fe-4ded-8e96-9016889a3479', 'f4913a19-4452-4e7c-ac31-ad2c3b4e54aa']
+2025-05-18 16:02:28,446 - main - INFO - Status check requested for job: f4913a19-4452-4e7c-ac31-ad2c3b4e54aa
+2025-05-18 16:02:28,446 - main - INFO - Current jobs in memory: ['54658afe-6932-424b-9d47-3aa5d8158e63', 'ead26559-63d5-458d-9be4-2523a4297460', 'ec7ca6c3-b8fe-4ded-8e96-9016889a3479', 'f4913a19-4452-4e7c-ac31-ad2c3b4e54aa']
+2025-05-18 16:02:28,448 - main - INFO - Status check requested for job: f4913a19-4452-4e7c-ac31-ad2c3b4e54aa
+2025-05-18 16:02:28,448 - main - INFO - Current jobs in memory: ['54658afe-6932-424b-9d47-3aa5d8158e63', 'ead26559-63d5-458d-9be4-2523a4297460', 'ec7ca6c3-b8fe-4ded-8e96-9016889a3479', 'f4913a19-4452-4e7c-ac31-ad2c3b4e54aa']
+2025-05-18 16:02:28,450 - main - INFO - Status check requested for job: f4913a19-4452-4e7c-ac31-ad2c3b4e54aa
+2025-05-18 16:02:28,450 - main - INFO - Current jobs in memory: ['54658afe-6932-424b-9d47-3aa5d8158e63', 'ead26559-63d5-458d-9be4-2523a4297460', 'ec7ca6c3-b8fe-4ded-8e96-9016889a3479', 'f4913a19-4452-4e7c-ac31-ad2c3b4e54aa']
+2025-05-18 16:03:37,204 - main - INFO - Received exit signal 2. Cleaning up and shutting down...
+2025-05-18 16:03:38,768 - main - INFO - S3 storage initialized: True
+2025-05-18 16:03:38,768 - main - INFO - S3 bucket configured: manim-ai-videos
+2025-05-18 16:03:39,070 - main - INFO - Anthropic client initialized successfully
+2025-05-18 16:03:39,075 - main - INFO - Loaded job 54658afe-6932-424b-9d47-3aa5d8158e63 from disk
+2025-05-18 16:03:39,076 - main - INFO - Loaded job ead26559-63d5-458d-9be4-2523a4297460 from disk
+2025-05-18 16:03:39,076 - main - INFO - Loaded job ec7ca6c3-b8fe-4ded-8e96-9016889a3479 from disk
+2025-05-18 16:03:39,076 - main - INFO - Loaded job f4913a19-4452-4e7c-ac31-ad2c3b4e54aa from disk
+2025-05-18 16:03:45,170 - main - INFO - Saved job f2390e2b-6169-4c29-9a47-4823f8503700 to disk
+2025-05-18 16:03:45,186 - main - INFO - Processing animation request: f2390e2b-6169-4c29-9a47-4823f8503700, prompt: Binary Search
+2025-05-18 16:03:45,187 - main - INFO - Saved job f2390e2b-6169-4c29-9a47-4823f8503700 to disk
+2025-05-18 16:03:45,187 - main - WARNING - No working LLM API found, using API error fallback
+2025-05-18 16:03:45,188 - main - WARNING - AI generation failed or not available, using direct API error video URL
+2025-05-18 16:03:45,189 - main - INFO - Saved job f4913a19-4452-4e7c-ac31-ad2c3b4e54aa to disk
+2025-05-18 16:03:45,190 - main - INFO - Saved job f2390e2b-6169-4c29-9a47-4823f8503700 to disk
+2025-05-18 16:03:45,370 - main - INFO - Received exit signal 2. Cleaning up and shutting down...
+2025-05-18 16:03:46,575 - main - INFO - Process stdout: [05/18/25 16:03:46] INFO                               scene_file_writer.py:886
+                             File ready at                                     
+                             'C:\Users\harsh\Desktop\p                         
+                             rojects\Startups\aws\Mani                         
+                             m-Backend\outputs\media\i                         
+                             mages\f2390e2b-6169-4c29-                         
+                             9a47-4823f8503700.png'                            
+                                                                               
+                    INFO     Rendered APIErrorDemo                 scene.py:255
+                             Played 0 animations                               
+
+2025-05-18 16:03:46,616 - main - ERROR - Process stderr: C:\Users\harsh\AppData\Local\Programs\Python\Python311\Lib\site-packages\pydub\utils.py:170: RuntimeWarning: Couldn't find ffmpeg or avconv - defaulting to ffmpeg, but may not work
+  warn("Couldn't find ffmpeg or avconv - defaulting to ffmpeg, but may not work", RuntimeWarning)
+
+2025-05-18 16:03:46,619 - main - ERROR - Error creating video: No video file was generated
+2025-05-18 16:03:46,621 - main - INFO - Using direct error video URL for job f2390e2b-6169-4c29-9a47-4823f8503700: https://manim-ai-videos.s3.us-east-1.amazonaws.com/videos/ec808a73-d0e8-4573-9057-5c1580fa1e11.mp4
+2025-05-18 16:03:46,621 - main - INFO - Video creation result: {'local_path': 'outputs\\media\\f2390e2b-6169-4c29-9a47-4823f8503700.mp4', 's3_url': 'https://manim-ai-videos.s3.us-east-1.amazonaws.com/videos/ec808a73-d0e8-4573-9057-5c1580fa1e11.mp4'}
+2025-05-18 16:03:46,622 - main - INFO - Using S3 URL from create_video: https://manim-ai-videos.s3.us-east-1.amazonaws.com/videos/ec808a73-d0e8-4573-9057-5c1580fa1e11.mp4
+2025-05-18 16:03:46,623 - main - INFO - Final video URL: https://manim-ai-videos.s3.us-east-1.amazonaws.com/videos/ec808a73-d0e8-4573-9057-5c1580fa1e11.mp4
+2025-05-18 16:03:46,625 - main - INFO - Saved job f2390e2b-6169-4c29-9a47-4823f8503700 to disk
+2025-05-18 16:03:48,120 - main - INFO - S3 storage initialized: True
+2025-05-18 16:03:48,120 - main - INFO - S3 bucket configured: manim-ai-videos
+2025-05-18 16:03:48,415 - main - INFO - Anthropic client initialized successfully
+2025-05-18 16:03:48,420 - main - INFO - Loaded job 54658afe-6932-424b-9d47-3aa5d8158e63 from disk
+2025-05-18 16:03:48,421 - main - INFO - Loaded job ead26559-63d5-458d-9be4-2523a4297460 from disk
+2025-05-18 16:03:48,424 - main - INFO - Loaded job ec7ca6c3-b8fe-4ded-8e96-9016889a3479 from disk
+2025-05-18 16:03:48,424 - main - INFO - Loaded job f2390e2b-6169-4c29-9a47-4823f8503700 from disk
+2025-05-18 16:03:48,424 - main - INFO - Loaded job f4913a19-4452-4e7c-ac31-ad2c3b4e54aa from disk
+2025-05-18 16:03:49,808 - main - INFO - S3 storage initialized: True
+2025-05-18 16:03:49,808 - main - INFO - S3 bucket configured: manim-ai-videos
+2025-05-18 16:03:50,102 - main - INFO - Anthropic client initialized successfully
+2025-05-18 16:03:50,108 - main - INFO - Loaded job 54658afe-6932-424b-9d47-3aa5d8158e63 from disk
+2025-05-18 16:03:50,109 - main - INFO - Loaded job ead26559-63d5-458d-9be4-2523a4297460 from disk
+2025-05-18 16:03:50,109 - main - INFO - Loaded job ec7ca6c3-b8fe-4ded-8e96-9016889a3479 from disk
+2025-05-18 16:03:50,109 - main - INFO - Loaded job f2390e2b-6169-4c29-9a47-4823f8503700 from disk
+2025-05-18 16:03:50,110 - main - INFO - Loaded job f4913a19-4452-4e7c-ac31-ad2c3b4e54aa from disk
+2025-05-18 16:03:50,110 - main - INFO - Status check requested for job: f2390e2b-6169-4c29-9a47-4823f8503700
+2025-05-18 16:03:50,111 - main - INFO - Current jobs in memory: ['54658afe-6932-424b-9d47-3aa5d8158e63', 'ead26559-63d5-458d-9be4-2523a4297460', 'ec7ca6c3-b8fe-4ded-8e96-9016889a3479', 'f2390e2b-6169-4c29-9a47-4823f8503700', 'f4913a19-4452-4e7c-ac31-ad2c3b4e54aa']
+2025-05-18 16:04:24,255 - main - INFO - Received exit signal 2. Cleaning up and shutting down...
+2025-05-18 16:04:25,662 - main - INFO - S3 storage initialized: True
+2025-05-18 16:04:25,662 - main - INFO - S3 bucket configured: manim-ai-videos
+2025-05-18 16:04:25,951 - main - INFO - Anthropic client initialized successfully
+2025-05-18 16:04:25,956 - main - INFO - Loaded job 54658afe-6932-424b-9d47-3aa5d8158e63 from disk
+2025-05-18 16:04:25,958 - main - INFO - Loaded job ead26559-63d5-458d-9be4-2523a4297460 from disk
+2025-05-18 16:04:25,962 - main - INFO - Loaded job ec7ca6c3-b8fe-4ded-8e96-9016889a3479 from disk
+2025-05-18 16:04:25,965 - main - INFO - Loaded job f2390e2b-6169-4c29-9a47-4823f8503700 from disk
+2025-05-18 16:04:25,966 - main - INFO - Loaded job f4913a19-4452-4e7c-ac31-ad2c3b4e54aa from disk
+2025-05-18 16:04:58,649 - main - INFO - Received exit signal 2. Cleaning up and shutting down...
+2025-05-18 16:05:00,174 - main - INFO - S3 storage initialized: True
+2025-05-18 16:05:00,174 - main - INFO - S3 bucket configured: manim-ai-videos
+2025-05-18 16:05:00,470 - main - INFO - Anthropic client initialized successfully
+2025-05-18 16:05:00,477 - main - INFO - Loaded job 54658afe-6932-424b-9d47-3aa5d8158e63 from disk
+2025-05-18 16:05:00,478 - main - INFO - Loaded job ead26559-63d5-458d-9be4-2523a4297460 from disk
+2025-05-18 16:05:00,478 - main - INFO - Loaded job ec7ca6c3-b8fe-4ded-8e96-9016889a3479 from disk
+2025-05-18 16:05:00,478 - main - INFO - Loaded job f2390e2b-6169-4c29-9a47-4823f8503700 from disk
+2025-05-18 16:05:00,480 - main - INFO - Loaded job f4913a19-4452-4e7c-ac31-ad2c3b4e54aa from disk
+2025-05-18 16:05:23,030 - main - INFO - Received exit signal 2. Cleaning up and shutting down...
+2025-05-18 16:05:24,768 - main - INFO - S3 storage initialized: True
+2025-05-18 16:05:24,768 - main - INFO - S3 bucket configured: manim-ai-videos
+2025-05-18 16:05:25,081 - main - INFO - Anthropic client initialized successfully
+2025-05-18 16:05:25,088 - main - INFO - Loaded job 54658afe-6932-424b-9d47-3aa5d8158e63 from disk
+2025-05-18 16:05:25,090 - main - INFO - Loaded job ead26559-63d5-458d-9be4-2523a4297460 from disk
+2025-05-18 16:05:25,090 - main - INFO - Loaded job ec7ca6c3-b8fe-4ded-8e96-9016889a3479 from disk
+2025-05-18 16:05:25,090 - main - INFO - Loaded job f2390e2b-6169-4c29-9a47-4823f8503700 from disk
+2025-05-18 16:05:25,090 - main - INFO - Loaded job f4913a19-4452-4e7c-ac31-ad2c3b4e54aa from disk
+2025-05-18 16:05:57,545 - main - INFO - Received exit signal 2. Cleaning up and shutting down...
+2025-05-18 16:05:59,089 - main - INFO - S3 storage initialized: True
+2025-05-18 16:05:59,090 - main - INFO - S3 bucket configured: manim-ai-videos
+2025-05-18 16:05:59,392 - main - INFO - Anthropic client initialized successfully
+2025-05-18 16:05:59,398 - main - INFO - Loaded job 54658afe-6932-424b-9d47-3aa5d8158e63 from disk
+2025-05-18 16:05:59,400 - main - INFO - Loaded job ead26559-63d5-458d-9be4-2523a4297460 from disk
+2025-05-18 16:05:59,401 - main - INFO - Loaded job ec7ca6c3-b8fe-4ded-8e96-9016889a3479 from disk
+2025-05-18 16:05:59,401 - main - INFO - Loaded job f2390e2b-6169-4c29-9a47-4823f8503700 from disk
+2025-05-18 16:05:59,401 - main - INFO - Loaded job f4913a19-4452-4e7c-ac31-ad2c3b4e54aa from disk
+2025-05-18 16:06:20,040 - main - INFO - Received exit signal 2. Cleaning up and shutting down...
+2025-05-18 16:06:21,567 - main - INFO - S3 storage initialized: True
+2025-05-18 16:06:21,567 - main - INFO - S3 bucket configured: manim-ai-videos
+2025-05-18 16:06:21,863 - main - INFO - Anthropic client initialized successfully
+2025-05-18 16:06:21,869 - main - INFO - Loaded job 54658afe-6932-424b-9d47-3aa5d8158e63 from disk
+2025-05-18 16:06:21,870 - main - INFO - Loaded job ead26559-63d5-458d-9be4-2523a4297460 from disk
+2025-05-18 16:06:21,870 - main - INFO - Loaded job ec7ca6c3-b8fe-4ded-8e96-9016889a3479 from disk
+2025-05-18 16:06:21,870 - main - INFO - Loaded job f2390e2b-6169-4c29-9a47-4823f8503700 from disk
+2025-05-18 16:06:21,870 - main - INFO - Loaded job f4913a19-4452-4e7c-ac31-ad2c3b4e54aa from disk
+2025-05-18 16:07:07,432 - main - INFO - Saved job 5a025879-2788-4681-9aa3-31950c91d18e to disk
+2025-05-18 16:07:07,439 - main - INFO - Processing animation request: 5a025879-2788-4681-9aa3-31950c91d18e, prompt: Create a cinematic 3D animation visualizing the formation of a black hole from a collapsing massive star. Begin with a rotating 3D model of a star with animated plasma waves and solar flares using particle systems. As the star collapses, show spacetime curvature with dynamically morphing grid lines and a gravity well forming underneath. Add surrounding orbiting celestial bodies spiraling inward. As the black hole forms, animate an accretion disk with motion blur and lens flare effects. Include real-time plotted graphs of temperature and gravitational force on the side, updating as the collapse progresses. Zoom the camera in and out with easing transitions, and use dynamic lighting to simulate relativistic effects. Overlay dramatic captions with synced music cues to match key transformation moments.
+2025-05-18 16:07:07,441 - main - INFO - Saved job 5a025879-2788-4681-9aa3-31950c91d18e to disk
+2025-05-18 16:07:07,442 - main - INFO - Generating code with Anthropic Claude
+2025-05-18 16:07:10,589 - main - INFO - Status check requested for job: 5a025879-2788-4681-9aa3-31950c91d18e
+2025-05-18 16:07:10,590 - main - INFO - Current jobs in memory: ['54658afe-6932-424b-9d47-3aa5d8158e63', 'ead26559-63d5-458d-9be4-2523a4297460', 'ec7ca6c3-b8fe-4ded-8e96-9016889a3479', 'f2390e2b-6169-4c29-9a47-4823f8503700', 'f4913a19-4452-4e7c-ac31-ad2c3b4e54aa', '5a025879-2788-4681-9aa3-31950c91d18e']
+2025-05-18 16:07:13,538 - main - INFO - Status check requested for job: 5a025879-2788-4681-9aa3-31950c91d18e
+2025-05-18 16:07:13,538 - main - INFO - Current jobs in memory: ['54658afe-6932-424b-9d47-3aa5d8158e63', 'ead26559-63d5-458d-9be4-2523a4297460', 'ec7ca6c3-b8fe-4ded-8e96-9016889a3479', 'f2390e2b-6169-4c29-9a47-4823f8503700', 'f4913a19-4452-4e7c-ac31-ad2c3b4e54aa', '5a025879-2788-4681-9aa3-31950c91d18e']
+2025-05-18 16:07:16,536 - main - INFO - Status check requested for job: 5a025879-2788-4681-9aa3-31950c91d18e
+2025-05-18 16:07:16,536 - main - INFO - Current jobs in memory: ['54658afe-6932-424b-9d47-3aa5d8158e63', 'ead26559-63d5-458d-9be4-2523a4297460', 'ec7ca6c3-b8fe-4ded-8e96-9016889a3479', 'f2390e2b-6169-4c29-9a47-4823f8503700', 'f4913a19-4452-4e7c-ac31-ad2c3b4e54aa', '5a025879-2788-4681-9aa3-31950c91d18e']
+2025-05-18 16:07:18,783 - main - INFO - Successfully generated valid Manim code with Claude
+2025-05-18 16:07:18,784 - main - INFO - Saved job 5a025879-2788-4681-9aa3-31950c91d18e to disk
+2025-05-18 16:07:18,971 - main - INFO - Received exit signal 2. Cleaning up and shutting down...
+2025-05-18 16:07:35,001 - main - INFO - Process stdout: [05/18/25 16:07:22] INFO     Animation 0 : Partial     scene_file_writer.py:588
+                             movie file written in                             
+                             'C:\Users\harsh\Desktop\p                         
+                             rojects\Startups\aws\Mani                         
+                             m-Backend\outputs\media\p                         
+                             artial_movie_files\BlackH                         
+                             oleFormation\2016333726_1                         
+                             805317334_223132457.mp4'                          
+[05/18/25 16:07:23] INFO     Animation 1 : Partial     scene_file_writer.py:588
+                             movie file written in                             
+                             'C:\Users\harsh\Desktop\p                         
+                             rojects\Startups\aws\Mani                         
+                             m-Backend\outputs\media\p                         
+                             artial_movie_files\BlackH                         
+                             oleFormation\543634251_18                         
+                             15299415_1840201236.mp4'                          
+[05/18/25 16:07:27] INFO     Animation 2 : Partial     scene_file_writer.py:588
+                             movie file written in                             
+                             'C:\Users\harsh\Desktop\p                         
+                             rojects\Startups\aws\Mani                         
+                             m-Backend\outputs\media\p                         
+                             artial_movie_files\BlackH                         
+                             oleFormation\543634251_25                         
+                             0787262_1756682620.mp4'                           
+[05/18/25 16:07:28] INFO     Animation 3 : Partial     scene_file_writer.py:588
+                             movie file written in                             
+                             'C:\Users\harsh\Desktop\p                         
+                             rojects\Startups\aws\Mani                         
+                             m-Backend\outputs\media\p                         
+                             artial_movie_files\BlackH                         
+                             oleFormation\543634251_38                         
+                             29442342_3641767966.mp4'                          
+[05/18/25 16:07:29] INFO     Animation 4 : Partial     scene_file_writer.py:588
+                             movie file written in                             
+                             'C:\Users\harsh\Desktop\p                         
+                             rojects\Startups\aws\Mani                         
+                             m-Backend\outputs\media\p                         
+                             artial_movie_files\BlackH                         
+                             oleFormation\543634251_11                         
+                             21546647_3761162583.mp4'                          
+[05/18/25 16:07:34] INFO     Animation 5 : Partial     scene_file_writer.py:588
+                             movie file written in                             
+                             'C:\Users\harsh\Desktop\p                         
+                             rojects\Startups\aws\Mani                         
+                             m-Backend\outputs\media\p                         
+                             artial_movie_files\BlackH                         
+                             oleFormation\543634251_27                         
+                             25271481_2423866766.mp4'                          
+
+2025-05-18 16:07:35,002 - main - ERROR - Process stderr: C:\Users\harsh\AppData\Local\Programs\Python\Python311\Lib\site-packages\pydub\utils.py:170: RuntimeWarning: Couldn't find ffmpeg or avconv - defaulting to ffmpeg, but may not work
+  warn("Couldn't find ffmpeg or avconv - defaulting to ffmpeg, but may not work", RuntimeWarning)
+
+Animation 0: Create(Sphere of 288 submobjects):   0%|          | 0/60 [00:00<?, ?it/s]
+Animation 0: Create(Sphere of 288 submobjects):  10%|#         | 6/60 [00:00<00:01, 51.66it/s]
+Animation 0: Create(Sphere of 288 submobjects):  20%|##        | 12/60 [00:00<00:00, 50.66it/s]
+Animation 0: Create(Sphere of 288 submobjects):  30%|###       | 18/60 [00:00<00:00, 47.61it/s]
+Animation 0: Create(Sphere of 288 submobjects):  38%|###8      | 23/60 [00:00<00:00, 45.22it/s]
+Animation 0: Create(Sphere of 288 submobjects):  47%|####6     | 28/60 [00:00<00:00, 41.86it/s]
+Animation 0: Create(Sphere of 288 submobjects):  55%|#####5    | 33/60 [00:00<00:00, 40.00it/s]
+Animation 0: Create(Sphere of 288 submobjects):  63%|######3   | 38/60 [00:00<00:00, 38.23it/s]
+Animation 0: Create(Sphere of 288 submobjects):  70%|#######   | 42/60 [00:01<00:00, 36.74it/s]
+Animation 0: Create(Sphere of 288 submobjects):  77%|#######6  | 46/60 [00:01<00:00, 33.40it/s]
+Animation 0: Create(Sphere of 288 submobjects):  83%|########3 | 50/60 [00:01<00:00, 32.03it/s]
+Animation 0: Create(Sphere of 288 submobjects):  90%|######### | 54/60 [00:01<00:00, 30.67it/s]
+Animation 0: Create(Sphere of 288 submobjects):  97%|#########6| 58/60 [00:01<00:00, 29.02it/s]
+                                                                                               
+
+Animation 1: Create(VGroup of 50 submobjects):   0%|          | 0/45 [00:00<?, ?it/s]
+Animation 1: Create(VGroup of 50 submobjects):  42%|####2     | 19/45 [00:00<00:00, 181.79it/s]
+Animation 1: Create(VGroup of 50 submobjects):  84%|########4 | 38/45 [00:00<00:00, 164.29it/s]
+                                                                                               
+
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:   0%|          | 0/90 [00:00<?, ?it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:   3%|3         | 3/90 [00:00<00:04, 20.77it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:   7%|6         | 6/90 [00:00<00:03, 21.19it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:  10%|#         | 9/90 [00:00<00:03, 20.97it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:  13%|#3        | 12/90 [00:00<00:03, 20.73it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:  17%|#6        | 15/90 [00:00<00:03, 20.65it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:  20%|##        | 18/90 [00:00<00:03, 20.20it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:  23%|##3       | 21/90 [00:01<00:03, 20.27it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:  27%|##6       | 24/90 [00:01<00:03, 20.72it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:  30%|###       | 27/90 [00:01<00:03, 20.73it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:  33%|###3      | 30/90 [00:01<00:03, 19.63it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:  37%|###6      | 33/90 [00:01<00:02, 20.18it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:  40%|####      | 36/90 [00:01<00:02, 20.82it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:  43%|####3     | 39/90 [00:01<00:02, 20.92it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:  47%|####6     | 42/90 [00:02<00:02, 21.38it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:  50%|#####     | 45/90 [00:02<00:02, 21.12it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:  53%|#####3    | 48/90 [00:02<00:01, 21.37it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:  57%|#####6    | 51/90 [00:02<00:01, 21.90it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:  60%|######    | 54/90 [00:02<00:01, 22.58it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:  63%|######3   | 57/90 [00:02<00:01, 23.21it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:  67%|######6   | 60/90 [00:02<00:01, 23.82it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:  70%|#######   | 63/90 [00:02<00:01, 23.93it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:  73%|#######3  | 66/90 [00:03<00:00, 24.16it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:  77%|#######6  | 69/90 [00:03<00:00, 24.59it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:  80%|########  | 72/90 [00:03<00:00, 25.26it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:  83%|########3 | 75/90 [00:03<00:00, 25.72it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:  87%|########6 | 78/90 [00:03<00:00, 25.85it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:  90%|######### | 81/90 [00:03<00:00, 26.27it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:  93%|#########3| 84/90 [00:03<00:00, 26.42it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:  97%|#########6| 87/90 [00:03<00:00, 26.46it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.: 100%|##########| 90/90 [00:03<00:00, 26.21it/s]
+                                                                                                               
+
+Animation 3: Create(NumberPlane of 4 submobjects):   0%|          | 0/60 [00:00<?, ?it/s]
+Animation 3: Create(NumberPlane of 4 submobjects):  40%|####      | 24/60 [00:00<00:00, 234.00it/s]
+Animation 3: Create(NumberPlane of 4 submobjects):  80%|########  | 48/60 [00:00<00:00, 234.37it/s]
+                                                                                                   
+
+Animation 4: _MethodAnimation(NumberPlane of 4 submobjects), etc.:   0%|          | 0/60 [00:00<?, ?it/s]
+Animation 4: _MethodAnimation(NumberPlane of 4 submobjects), etc.:  30%|###       | 18/60 [00:00<00:00, 176.20it/s]
+Animation 4: _MethodAnimation(NumberPlane of 4 submobjects), etc.:  60%|######    | 36/60 [00:00<00:00, 170.36it/s]
+Animation 4: _MethodAnimation(NumberPlane of 4 submobjects), etc.:  92%|#########1| 55/60 [00:00<00:00, 174.76it/s]
+                                                                                                                   
+
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:   0%|          | 0/90 [00:00<?, ?it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:   3%|3         | 3/90 [00:00<00:03, 26.68it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:   7%|6         | 6/90 [00:00<00:03, 26.96it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  10%|#         | 9/90 [00:00<00:03, 26.54it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  13%|#3        | 12/90 [00:00<00:02, 26.18it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  17%|#6        | 15/90 [00:00<00:02, 26.38it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  20%|##        | 18/90 [00:00<00:02, 26.44it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  23%|##3       | 21/90 [00:00<00:02, 26.77it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  27%|##6       | 24/90 [00:00<00:02, 26.80it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  30%|###       | 27/90 [00:01<00:02, 26.67it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  33%|###3      | 30/90 [00:01<00:02, 26.47it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  37%|###6      | 33/90 [00:01<00:02, 26.60it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  40%|####      | 36/90 [00:01<00:02, 26.22it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  43%|####3     | 39/90 [00:01<00:01, 25.80it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  47%|####6     | 42/90 [00:01<00:01, 26.03it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  50%|#####     | 45/90 [00:01<00:01, 25.40it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  53%|#####3    | 48/90 [00:01<00:01, 25.94it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  57%|#####6    | 51/90 [00:01<00:01, 26.15it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  60%|######    | 54/90 [00:02<00:01, 25.81it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  63%|######3   | 57/90 [00:02<00:01, 25.50it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  67%|######6   | 60/90 [00:02<00:01, 24.96it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  70%|#######   | 63/90 [00:02<00:01, 24.31it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  73%|#######3  | 66/90 [00:02<00:00, 24.36it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  77%|#######6  | 69/90 [00:02<00:00, 24.70it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  80%|########  | 72/90 [00:02<00:00, 20.21it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  83%|########3 | 75/90 [00:03<00:00, 17.93it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  86%|########5 | 77/90 [00:03<00:00, 16.87it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  88%|########7 | 79/90 [00:03<00:00, 16.20it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  90%|######### | 81/90 [00:03<00:00, 15.81it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  92%|#########2| 83/90 [00:03<00:00, 16.11it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  94%|#########4| 85/90 [00:03<00:00, 15.58it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  97%|#########6| 87/90 [00:03<00:00, 15.32it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  99%|#########8| 89/90 [00:04<00:00, 15.20it/s]
+                                                                                                                   
+Traceback (most recent call last):
+  File "C:\Users\harsh\Desktop\projects\Startups\aws\Manim-Backend\outputs\code\run_5a025879-2788-4681-9aa3-31950c91d18e.py", line 22, in <module>
+    scene.render()
+  File "C:\Users\harsh\AppData\Local\Programs\Python\Python311\Lib\site-packages\manim\scene\scene.py", line 237, in render
+    self.construct()
+  File "C:\Users\harsh\Desktop\projects\Startups\aws\Manim-Backend\outputs\code\manim_scene_5a025879_2788_4681_9aa3_31950c91d18e.py", line 84, in construct
+    self.camera.frame.animate.move_to(black_hole).set_height(3),
+    ^^^^^^^^^^^^^^^^^
+AttributeError: 'Camera' object has no attribute 'frame'
+
+2025-05-18 16:07:35,006 - main - ERROR - Error creating video: Render failed: C:\Users\harsh\AppData\Local\Programs\Python\Python311\Lib\site-packages\pydub\utils.py:170: RuntimeWarning: Couldn't find ffmpeg or avconv - defaulting to ffmpeg, but may not work
+  warn("Couldn't find ffmpeg or avconv - defaulting to ffmpeg, but may not work", RuntimeWarning)
+
+Animation 0: Create(Sphere of 288 submobjects):   0%|          | 0/60 [00:00<?, ?it/s]
+Animation 0: Create(Sphere of 288 submobjects):  10%|#         | 6/60 [00:00<00:01, 51.66it/s]
+Animation 0: Create(Sphere of 288 submobjects):  20%|##        | 12/60 [00:00<00:00, 50.66it/s]
+Animation 0: Create(Sphere of 288 submobjects):  30%|###       | 18/60 [00:00<00:00, 47.61it/s]
+Animation 0: Create(Sphere of 288 submobjects):  38%|###8      | 23/60 [00:00<00:00, 45.22it/s]
+Animation 0: Create(Sphere of 288 submobjects):  47%|####6     | 28/60 [00:00<00:00, 41.86it/s]
+Animation 0: Create(Sphere of 288 submobjects):  55%|#####5    | 33/60 [00:00<00:00, 40.00it/s]
+Animation 0: Create(Sphere of 288 submobjects):  63%|######3   | 38/60 [00:00<00:00, 38.23it/s]
+Animation 0: Create(Sphere of 288 submobjects):  70%|#######   | 42/60 [00:01<00:00, 36.74it/s]
+Animation 0: Create(Sphere of 288 submobjects):  77%|#######6  | 46/60 [00:01<00:00, 33.40it/s]
+Animation 0: Create(Sphere of 288 submobjects):  83%|########3 | 50/60 [00:01<00:00, 32.03it/s]
+Animation 0: Create(Sphere of 288 submobjects):  90%|######### | 54/60 [00:01<00:00, 30.67it/s]
+Animation 0: Create(Sphere of 288 submobjects):  97%|#########6| 58/60 [00:01<00:00, 29.02it/s]
+                                                                                               
+
+Animation 1: Create(VGroup of 50 submobjects):   0%|          | 0/45 [00:00<?, ?it/s]
+Animation 1: Create(VGroup of 50 submobjects):  42%|####2     | 19/45 [00:00<00:00, 181.79it/s]
+Animation 1: Create(VGroup of 50 submobjects):  84%|########4 | 38/45 [00:00<00:00, 164.29it/s]
+                                                                                               
+
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:   0%|          | 0/90 [00:00<?, ?it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:   3%|3         | 3/90 [00:00<00:04, 20.77it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:   7%|6         | 6/90 [00:00<00:03, 21.19it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:  10%|#         | 9/90 [00:00<00:03, 20.97it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:  13%|#3        | 12/90 [00:00<00:03, 20.73it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:  17%|#6        | 15/90 [00:00<00:03, 20.65it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:  20%|##        | 18/90 [00:00<00:03, 20.20it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:  23%|##3       | 21/90 [00:01<00:03, 20.27it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:  27%|##6       | 24/90 [00:01<00:03, 20.72it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:  30%|###       | 27/90 [00:01<00:03, 20.73it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:  33%|###3      | 30/90 [00:01<00:03, 19.63it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:  37%|###6      | 33/90 [00:01<00:02, 20.18it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:  40%|####      | 36/90 [00:01<00:02, 20.82it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:  43%|####3     | 39/90 [00:01<00:02, 20.92it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:  47%|####6     | 42/90 [00:02<00:02, 21.38it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:  50%|#####     | 45/90 [00:02<00:02, 21.12it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:  53%|#####3    | 48/90 [00:02<00:01, 21.37it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:  57%|#####6    | 51/90 [00:02<00:01, 21.90it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:  60%|######    | 54/90 [00:02<00:01, 22.58it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:  63%|######3   | 57/90 [00:02<00:01, 23.21it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:  67%|######6   | 60/90 [00:02<00:01, 23.82it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:  70%|#######   | 63/90 [00:02<00:01, 23.93it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:  73%|#######3  | 66/90 [00:03<00:00, 24.16it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:  77%|#######6  | 69/90 [00:03<00:00, 24.59it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:  80%|########  | 72/90 [00:03<00:00, 25.26it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:  83%|########3 | 75/90 [00:03<00:00, 25.72it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:  87%|########6 | 78/90 [00:03<00:00, 25.85it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:  90%|######### | 81/90 [00:03<00:00, 26.27it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:  93%|#########3| 84/90 [00:03<00:00, 26.42it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.:  97%|#########6| 87/90 [00:03<00:00, 26.46it/s]
+Animation 2: _MethodAnimation(Sphere of 288 submobjects), etc.: 100%|##########| 90/90 [00:03<00:00, 26.21it/s]
+                                                                                                               
+
+Animation 3: Create(NumberPlane of 4 submobjects):   0%|          | 0/60 [00:00<?, ?it/s]
+Animation 3: Create(NumberPlane of 4 submobjects):  40%|####      | 24/60 [00:00<00:00, 234.00it/s]
+Animation 3: Create(NumberPlane of 4 submobjects):  80%|########  | 48/60 [00:00<00:00, 234.37it/s]
+                                                                                                   
+
+Animation 4: _MethodAnimation(NumberPlane of 4 submobjects), etc.:   0%|          | 0/60 [00:00<?, ?it/s]
+Animation 4: _MethodAnimation(NumberPlane of 4 submobjects), etc.:  30%|###       | 18/60 [00:00<00:00, 176.20it/s]
+Animation 4: _MethodAnimation(NumberPlane of 4 submobjects), etc.:  60%|######    | 36/60 [00:00<00:00, 170.36it/s]
+Animation 4: _MethodAnimation(NumberPlane of 4 submobjects), etc.:  92%|#########1| 55/60 [00:00<00:00, 174.76it/s]
+                                                                                                                   
+
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:   0%|          | 0/90 [00:00<?, ?it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:   3%|3         | 3/90 [00:00<00:03, 26.68it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:   7%|6         | 6/90 [00:00<00:03, 26.96it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  10%|#         | 9/90 [00:00<00:03, 26.54it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  13%|#3        | 12/90 [00:00<00:02, 26.18it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  17%|#6        | 15/90 [00:00<00:02, 26.38it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  20%|##        | 18/90 [00:00<00:02, 26.44it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  23%|##3       | 21/90 [00:00<00:02, 26.77it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  27%|##6       | 24/90 [00:00<00:02, 26.80it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  30%|###       | 27/90 [00:01<00:02, 26.67it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  33%|###3      | 30/90 [00:01<00:02, 26.47it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  37%|###6      | 33/90 [00:01<00:02, 26.60it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  40%|####      | 36/90 [00:01<00:02, 26.22it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  43%|####3     | 39/90 [00:01<00:01, 25.80it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  47%|####6     | 42/90 [00:01<00:01, 26.03it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  50%|#####     | 45/90 [00:01<00:01, 25.40it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  53%|#####3    | 48/90 [00:01<00:01, 25.94it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  57%|#####6    | 51/90 [00:01<00:01, 26.15it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  60%|######    | 54/90 [00:02<00:01, 25.81it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  63%|######3   | 57/90 [00:02<00:01, 25.50it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  67%|######6   | 60/90 [00:02<00:01, 24.96it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  70%|#######   | 63/90 [00:02<00:01, 24.31it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  73%|#######3  | 66/90 [00:02<00:00, 24.36it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  77%|#######6  | 69/90 [00:02<00:00, 24.70it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  80%|########  | 72/90 [00:02<00:00, 20.21it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  83%|########3 | 75/90 [00:03<00:00, 17.93it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  86%|########5 | 77/90 [00:03<00:00, 16.87it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  88%|########7 | 79/90 [00:03<00:00, 16.20it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  90%|######### | 81/90 [00:03<00:00, 15.81it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  92%|#########2| 83/90 [00:03<00:00, 16.11it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  94%|#########4| 85/90 [00:03<00:00, 15.58it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  97%|#########6| 87/90 [00:03<00:00, 15.32it/s]
+Animation 5: ReplacementTransform(Sphere of 288 submobjects), etc.:  99%|#########8| 89/90 [00:04<00:00, 15.20it/s]
+                                                                                                                   
+Traceback (most recent call last):
+  File "C:\Users\harsh\Desktop\projects\Startups\aws\Manim-Backend\outputs\code\run_5a025879-2788-4681-9aa3-31950c91d18e.py", line 22, in <module>
+    scene.render()
+  File "C:\Users\harsh\AppData\Local\Programs\Python\Python311\Lib\site-packages\manim\scene\scene.py", line 237, in render
+    self.construct()
+  File "C:\Users\harsh\Desktop\projects\Startups\aws\Manim-Backend\outputs\code\manim_scene_5a025879_2788_4681_9aa3_31950c91d18e.py", line 84, in construct
+    self.camera.frame.animate.move_to(black_hole).set_height(3),
+    ^^^^^^^^^^^^^^^^^
+AttributeError: 'Camera' object has no attribute 'frame'
+
+2025-05-18 16:07:35,011 - main - INFO - Using direct error video URL for job 5a025879-2788-4681-9aa3-31950c91d18e: https://manim-ai-videos.s3.us-east-1.amazonaws.com/videos/ec808a73-d0e8-4573-9057-5c1580fa1e11.mp4
+2025-05-18 16:07:35,011 - main - INFO - Video creation result: {'local_path': 'outputs\\media\\5a025879-2788-4681-9aa3-31950c91d18e.mp4', 's3_url': 'https://manim-ai-videos.s3.us-east-1.amazonaws.com/videos/ec808a73-d0e8-4573-9057-5c1580fa1e11.mp4'}
+2025-05-18 16:07:35,011 - main - INFO - Using S3 URL from create_video: https://manim-ai-videos.s3.us-east-1.amazonaws.com/videos/ec808a73-d0e8-4573-9057-5c1580fa1e11.mp4
+2025-05-18 16:07:35,011 - main - INFO - Final video URL: https://manim-ai-videos.s3.us-east-1.amazonaws.com/videos/ec808a73-d0e8-4573-9057-5c1580fa1e11.mp4
+2025-05-18 16:07:35,013 - main - INFO - Saved job 5a025879-2788-4681-9aa3-31950c91d18e to disk
+2025-05-18 16:07:36,806 - main - INFO - S3 storage initialized: True
+2025-05-18 16:07:36,806 - main - INFO - S3 bucket configured: manim-ai-videos
+2025-05-18 16:07:37,130 - main - INFO - Anthropic client initialized successfully
+2025-05-18 16:07:37,134 - main - INFO - Loaded job 54658afe-6932-424b-9d47-3aa5d8158e63 from disk
+2025-05-18 16:07:37,136 - main - INFO - Loaded job 5a025879-2788-4681-9aa3-31950c91d18e from disk
+2025-05-18 16:07:37,137 - main - INFO - Loaded job ead26559-63d5-458d-9be4-2523a4297460 from disk
+2025-05-18 16:07:37,137 - main - INFO - Loaded job ec7ca6c3-b8fe-4ded-8e96-9016889a3479 from disk
+2025-05-18 16:07:37,139 - main - INFO - Loaded job f2390e2b-6169-4c29-9a47-4823f8503700 from disk
+2025-05-18 16:07:37,139 - main - INFO - Loaded job f4913a19-4452-4e7c-ac31-ad2c3b4e54aa from disk
+2025-05-18 16:07:38,663 - main - INFO - S3 storage initialized: True
+2025-05-18 16:07:38,663 - main - INFO - S3 bucket configured: manim-ai-videos
+2025-05-18 16:07:38,982 - main - INFO - Anthropic client initialized successfully
+2025-05-18 16:07:38,987 - main - INFO - Loaded job 54658afe-6932-424b-9d47-3aa5d8158e63 from disk
+2025-05-18 16:07:38,989 - main - INFO - Loaded job 5a025879-2788-4681-9aa3-31950c91d18e from disk
+2025-05-18 16:07:38,990 - main - INFO - Loaded job ead26559-63d5-458d-9be4-2523a4297460 from disk
+2025-05-18 16:07:38,990 - main - INFO - Loaded job ec7ca6c3-b8fe-4ded-8e96-9016889a3479 from disk
+2025-05-18 16:07:39,005 - main - INFO - Loaded job f2390e2b-6169-4c29-9a47-4823f8503700 from disk
+2025-05-18 16:07:39,005 - main - INFO - Loaded job f4913a19-4452-4e7c-ac31-ad2c3b4e54aa from disk
+2025-05-18 16:07:39,009 - main - INFO - Status check requested for job: 5a025879-2788-4681-9aa3-31950c91d18e
+2025-05-18 16:07:39,009 - main - INFO - Current jobs in memory: ['54658afe-6932-424b-9d47-3aa5d8158e63', '5a025879-2788-4681-9aa3-31950c91d18e', 'ead26559-63d5-458d-9be4-2523a4297460', 'ec7ca6c3-b8fe-4ded-8e96-9016889a3479', 'f2390e2b-6169-4c29-9a47-4823f8503700', 'f4913a19-4452-4e7c-ac31-ad2c3b4e54aa']
+2025-05-18 16:07:39,013 - main - INFO - Status check requested for job: 5a025879-2788-4681-9aa3-31950c91d18e
+2025-05-18 16:07:39,015 - main - INFO - Current jobs in memory: ['54658afe-6932-424b-9d47-3aa5d8158e63', '5a025879-2788-4681-9aa3-31950c91d18e', 'ead26559-63d5-458d-9be4-2523a4297460', 'ec7ca6c3-b8fe-4ded-8e96-9016889a3479', 'f2390e2b-6169-4c29-9a47-4823f8503700', 'f4913a19-4452-4e7c-ac31-ad2c3b4e54aa']
+2025-05-18 16:07:39,021 - main - INFO - Status check requested for job: 5a025879-2788-4681-9aa3-31950c91d18e
+2025-05-18 16:07:39,021 - main - INFO - Current jobs in memory: ['54658afe-6932-424b-9d47-3aa5d8158e63', '5a025879-2788-4681-9aa3-31950c91d18e', 'ead26559-63d5-458d-9be4-2523a4297460', 'ec7ca6c3-b8fe-4ded-8e96-9016889a3479', 'f2390e2b-6169-4c29-9a47-4823f8503700', 'f4913a19-4452-4e7c-ac31-ad2c3b4e54aa']
+2025-05-18 16:07:39,024 - main - INFO - Status check requested for job: 5a025879-2788-4681-9aa3-31950c91d18e
+2025-05-18 16:07:39,033 - main - INFO - Current jobs in memory: ['54658afe-6932-424b-9d47-3aa5d8158e63', '5a025879-2788-4681-9aa3-31950c91d18e', 'ead26559-63d5-458d-9be4-2523a4297460', 'ec7ca6c3-b8fe-4ded-8e96-9016889a3479', 'f2390e2b-6169-4c29-9a47-4823f8503700', 'f4913a19-4452-4e7c-ac31-ad2c3b4e54aa']
+2025-05-18 16:07:39,034 - main - INFO - Status check requested for job: 5a025879-2788-4681-9aa3-31950c91d18e
+2025-05-18 16:07:39,034 - main - INFO - Current jobs in memory: ['54658afe-6932-424b-9d47-3aa5d8158e63', '5a025879-2788-4681-9aa3-31950c91d18e', 'ead26559-63d5-458d-9be4-2523a4297460', 'ec7ca6c3-b8fe-4ded-8e96-9016889a3479', 'f2390e2b-6169-4c29-9a47-4823f8503700', 'f4913a19-4452-4e7c-ac31-ad2c3b4e54aa']
+2025-05-18 16:07:39,037 - main - INFO - Status check requested for job: 5a025879-2788-4681-9aa3-31950c91d18e
+2025-05-18 16:07:39,038 - main - INFO - Current jobs in memory: ['54658afe-6932-424b-9d47-3aa5d8158e63', '5a025879-2788-4681-9aa3-31950c91d18e', 'ead26559-63d5-458d-9be4-2523a4297460', 'ec7ca6c3-b8fe-4ded-8e96-9016889a3479', 'f2390e2b-6169-4c29-9a47-4823f8503700', 'f4913a19-4452-4e7c-ac31-ad2c3b4e54aa']
+2025-05-18 16:08:21,485 - main - INFO - Received exit signal 2. Cleaning up and shutting down...
+2025-05-18 16:08:23,094 - main - INFO - S3 storage initialized: True
+2025-05-18 16:08:23,095 - main - INFO - S3 bucket configured: manim-ai-videos
+2025-05-18 16:08:23,419 - main - INFO - Anthropic client initialized successfully
+2025-05-18 16:08:23,424 - main - INFO - Loaded job 54658afe-6932-424b-9d47-3aa5d8158e63 from disk
+2025-05-18 16:08:23,425 - main - INFO - Loaded job 5a025879-2788-4681-9aa3-31950c91d18e from disk
+2025-05-18 16:08:23,426 - main - INFO - Loaded job ead26559-63d5-458d-9be4-2523a4297460 from disk
+2025-05-18 16:08:23,426 - main - INFO - Loaded job ec7ca6c3-b8fe-4ded-8e96-9016889a3479 from disk
+2025-05-18 16:08:23,426 - main - INFO - Loaded job f2390e2b-6169-4c29-9a47-4823f8503700 from disk
+2025-05-18 16:08:23,427 - main - INFO - Loaded job f4913a19-4452-4e7c-ac31-ad2c3b4e54aa from disk
+2025-05-18 16:08:27,099 - main - INFO - Saved job 78ed1e23-94b4-49f7-a035-bea8a633f830 to disk
+2025-05-18 16:08:27,107 - main - INFO - Processing animation request: 78ed1e23-94b4-49f7-a035-bea8a633f830, prompt: asa
+2025-05-18 16:08:27,108 - main - INFO - Saved job 78ed1e23-94b4-49f7-a035-bea8a633f830 to disk
+2025-05-18 16:08:27,110 - main - WARNING - No working LLM API found, using API error fallback
+2025-05-18 16:08:27,111 - main - WARNING - AI generation failed or not available, using direct API error video URL
+2025-05-18 16:08:27,112 - main - INFO - Saved job 78ed1e23-94b4-49f7-a035-bea8a633f830 to disk
+2025-05-18 16:08:27,113 - main - INFO - Saved job 78ed1e23-94b4-49f7-a035-bea8a633f830 to disk
+2025-05-18 16:08:27,114 - main - INFO - Using direct URL for job 78ed1e23-94b4-49f7-a035-bea8a633f830: https://manim-ai-videos.s3.us-east-1.amazonaws.com/videos/0251cdf9-76dc-4484-85d7-85dd8252ea89.mp4
+2025-05-18 16:08:27,114 - main - INFO - Using S3 URL from create_video: https://manim-ai-videos.s3.us-east-1.amazonaws.com/videos/0251cdf9-76dc-4484-85d7-85dd8252ea89.mp4
+2025-05-18 16:08:27,115 - main - INFO - Final video URL: https://manim-ai-videos.s3.us-east-1.amazonaws.com/videos/0251cdf9-76dc-4484-85d7-85dd8252ea89.mp4
+2025-05-18 16:08:27,115 - main - INFO - Saved job 78ed1e23-94b4-49f7-a035-bea8a633f830 to disk
+2025-05-18 16:08:27,222 - main - INFO - Received exit signal 2. Cleaning up and shutting down...
+2025-05-18 16:08:28,742 - main - INFO - S3 storage initialized: True
+2025-05-18 16:08:28,744 - main - INFO - S3 bucket configured: manim-ai-videos
+2025-05-18 16:08:29,028 - main - INFO - Anthropic client initialized successfully
+2025-05-18 16:08:29,034 - main - INFO - Loaded job 54658afe-6932-424b-9d47-3aa5d8158e63 from disk
+2025-05-18 16:08:29,034 - main - INFO - Loaded job 5a025879-2788-4681-9aa3-31950c91d18e from disk
+2025-05-18 16:08:29,034 - main - INFO - Loaded job 78ed1e23-94b4-49f7-a035-bea8a633f830 from disk
+2025-05-18 16:08:29,036 - main - INFO - Loaded job ead26559-63d5-458d-9be4-2523a4297460 from disk
+2025-05-18 16:08:29,038 - main - INFO - Loaded job ec7ca6c3-b8fe-4ded-8e96-9016889a3479 from disk
+2025-05-18 16:08:29,038 - main - INFO - Loaded job f2390e2b-6169-4c29-9a47-4823f8503700 from disk
+2025-05-18 16:08:29,038 - main - INFO - Loaded job f4913a19-4452-4e7c-ac31-ad2c3b4e54aa from disk
+2025-05-18 16:08:30,113 - main - INFO - Status check requested for job: 78ed1e23-94b4-49f7-a035-bea8a633f830
+2025-05-18 16:08:30,113 - main - INFO - Current jobs in memory: ['54658afe-6932-424b-9d47-3aa5d8158e63', '5a025879-2788-4681-9aa3-31950c91d18e', '78ed1e23-94b4-49f7-a035-bea8a633f830', 'ead26559-63d5-458d-9be4-2523a4297460', 'ec7ca6c3-b8fe-4ded-8e96-9016889a3479', 'f2390e2b-6169-4c29-9a47-4823f8503700', 'f4913a19-4452-4e7c-ac31-ad2c3b4e54aa']
+2025-05-18 16:08:40,949 - main - INFO - Received exit signal 2. Cleaning up and shutting down...
+2025-05-18 16:08:42,443 - main - INFO - S3 storage initialized: True
+2025-05-18 16:08:42,443 - main - INFO - S3 bucket configured: manim-ai-videos
+2025-05-18 16:08:42,747 - main - INFO - Anthropic client initialized successfully
+2025-05-18 16:08:42,754 - main - INFO - Loaded job 54658afe-6932-424b-9d47-3aa5d8158e63 from disk
+2025-05-18 16:08:42,755 - main - INFO - Loaded job 5a025879-2788-4681-9aa3-31950c91d18e from disk
+2025-05-18 16:08:42,755 - main - INFO - Loaded job 78ed1e23-94b4-49f7-a035-bea8a633f830 from disk
+2025-05-18 16:08:42,759 - main - INFO - Loaded job ead26559-63d5-458d-9be4-2523a4297460 from disk
+2025-05-18 16:08:42,795 - main - INFO - Loaded job ec7ca6c3-b8fe-4ded-8e96-9016889a3479 from disk
+2025-05-18 16:08:42,796 - main - INFO - Loaded job f2390e2b-6169-4c29-9a47-4823f8503700 from disk
+2025-05-18 16:08:42,797 - main - INFO - Loaded job f4913a19-4452-4e7c-ac31-ad2c3b4e54aa from disk
+2025-05-18 16:09:34,908 - main - INFO - Received exit signal 2. Cleaning up and shutting down...

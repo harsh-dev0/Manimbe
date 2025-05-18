@@ -308,9 +308,16 @@ def process_animation_request(job_id: str, prompt: str):
         })
         save_job(job_id, generation_jobs[job_id])
         
-        # Create the animation video
-        video_result = create_video(job_id, code_file_path)
-        logger.info(f"Video creation result: {video_result}")
+        # Check if we have a direct URL from the code generation step
+        if "direct_url" in generation_jobs[job_id]:
+            # Use the direct URL instead of creating a video
+            direct_url = generation_jobs[job_id]["direct_url"]
+            logger.info(f"Using direct URL for job {job_id}: {direct_url}")
+            video_result = {"local_path": str(MEDIA_DIR / f"{job_id}.mp4"), "s3_url": direct_url}
+        else:
+            # Create the animation video normally
+            video_result = create_video(job_id, code_file_path)
+            logger.info(f"Video creation result: {video_result}")
         
         # Handle video storage (local or S3)
         if video_result and isinstance(video_result, dict) and "local_path" in video_result:
@@ -431,6 +438,7 @@ Requirements:
 13. For fractions, use a/b notation instead of "\frac"
 14. Create visually appealing animations with smooth transitions
 15. Avoid complex packages and custom LaTeX commands
+16. Only Return the python code and nothing else
 Example:
 ```python
 # Dynamic Wave Function Visualization
@@ -543,95 +551,52 @@ class WaveFunction(Scene):
         logger.warning("No working LLM API found, using API error fallback")
 
 
-        # Fallback to API error demo code if AI generation fails
-        logger.warning("AI generation failed or not available, using API error demo code")
+        # Fallback to direct URL instead of generating API error demo code
+        logger.warning("AI generation failed or not available, using direct API error video URL")
         
-        # Create API error demo code
+        # Instead of generating code, we'll return a dummy code that won't be used
+        # The URL will be used directly in the process_animation_request function
         api_error_code = f"""
-# API key exhausted or error occurred
+# Dummy code - not used
 from manim import *
 
 class APIErrorDemo(Scene):
     def construct(self):
-        # Create a title
-        title = Text("API Credits Exhausted", font_size=48)
-        title.to_edge(UP)
-        
-        # Create explanation text
-        explanation = Text(
-            "The Anthropic API credits are currently exhausted.", 
-            font_size=24
-        )
-        contact = Text(
-            "Contact @ithp7 on Twitter or clone the GitHub project.",
-            font_size=24
-        )
-        
-        explanation.next_to(title, DOWN, buff=1)
-        contact.next_to(explanation, DOWN, buff=0.5)
-        
-        # Create the animation
-        self.play(Write(title))
-        self.wait(0.5)
-        self.play(FadeIn(explanation))
-        self.wait(0.5)
-        self.play(FadeIn(contact))
-        self.wait(2)
-        
-        # Add a note about the prompt
-        prompt_text = Text(f"Your prompt was: {prompt}", font_size=18, color=BLUE)
-        prompt_text.to_edge(DOWN, buff=1)
-        self.play(Write(prompt_text))
-        self.wait(1)
+        # This code won't be executed as we're using a direct URL
+        pass
 """
         
+        # Update the job to use the direct URL
+        job_id = next((k for k, v in generation_jobs.items() if v.get("prompt") == prompt), None)
+        if job_id:
+            generation_jobs[job_id]["direct_url"] = "https://manim-ai-videos.s3.us-east-1.amazonaws.com/videos/0251cdf9-76dc-4484-85d7-85dd8252ea89.mp4"
+            save_job(job_id, generation_jobs[job_id])
+            
         return api_error_code, "API Error Demo"
 
     except Exception as e:
         logger.error(f"Error in code generation: {str(e)}")
         
-        # Use the same API error demo code as defined above
-        logger.warning("Exception occurred, using API error demo code")
+        # Use direct URL instead of API error demo code
+        logger.warning("Exception occurred, using direct API error video URL")
         
-        # Create API error demo code
+        # Create minimal dummy code that won't be used
         api_error_code = f"""
-# API key exhausted or error occurred
+# Dummy code - not used
 from manim import *
 
 class APIErrorDemo(Scene):
     def construct(self):
-        # Create a title
-        title = Text("API Credits Exhausted", font_size=48)
-        title.to_edge(UP)
-        
-        # Create explanation text
-        explanation = Text(
-            "The Anthropic API credits are currently exhausted.", 
-            font_size=24
-        )
-        contact = Text(
-            "Contact @ithp7 on Twitter or clone the GitHub project.",
-            font_size=24
-        )
-        
-        explanation.next_to(title, DOWN, buff=1)
-        contact.next_to(explanation, DOWN, buff=0.5)
-        
-        # Create the animation
-        self.play(Write(title))
-        self.wait(0.5)
-        self.play(FadeIn(explanation))
-        self.wait(0.5)
-        self.play(FadeIn(contact))
-        self.wait(2)
-        
-        # Add a note about the prompt
-        prompt_text = Text(f"Your prompt was: {prompt}", font_size=18, color=BLUE)
-        prompt_text.to_edge(DOWN, buff=1)
-        self.play(Write(prompt_text))
-        self.wait(1)
+        # This code won't be executed as we're using a direct URL
+        pass
 """
         
+        # Update the job to use the direct URL if possible
+        job_id = next((k for k, v in generation_jobs.items() if v.get("prompt") == prompt), None)
+        if job_id:
+            generation_jobs[job_id]["direct_url"] = "https://manim-ai-videos.s3.us-east-1.amazonaws.com/videos/0251cdf9-76dc-4484-85d7-85dd8252ea89.mp4"
+            save_job(job_id, generation_jobs[job_id])
+            
         return api_error_code, "API Error Demo"
 
 # No demo code constants needed as we're using the API error demo code directly in the generate_manim_code function
@@ -781,45 +746,21 @@ scene.render()
         return create_dummy_video(job_id, str(e))
 
 def create_dummy_video(job_id: str, error_message: str):
-    dummy_video_path = MEDIA_DIR / f"{job_id}.mp4"
     try:
-        # Sanitize error message to avoid FFmpeg command injection
-        safe_error = error_message.replace("'", "").replace('"', "").replace(":", "-")[:100]
+        dummy_video_path = MEDIA_DIR / f"{job_id}.mp4"
         
-        # Create a friendly message about resource exhaustion
-        main_text = "Oops! Animation Too Complex"
-        error_text = "Our math hamsters got tired running on their wheels!"
-        help_text = "Try a simpler animation or break it into smaller parts"
+        # Instead of generating a video, use the provided error video URL
+        error_video_url = "https://manim-ai-videos.s3.us-east-1.amazonaws.com/videos/ec808a73-d0e8-4573-9057-5c1580fa1e11.mp4"
+        logger.info(f"Using direct error video URL for job {job_id}: {error_video_url}")
         
-        logger.info(f"Creating dummy error video for job {job_id}")
-        ffmpeg_cmd = [
-            "ffmpeg", "-y", "-f", "lavfi", "-i", "color=c=rgb(25,25,40):s=1280x720:d=10",
-            "-vf", f"drawtext=text='{main_text}':fontcolor=white:fontsize=40:x=(w-text_w)/2:y=100," + 
-                   f"drawtext=text='{error_text}':fontcolor=yellow:fontsize=30:x=(w-text_w)/2:y=200," +
-                   f"drawtext=text='{help_text}':fontcolor=cyan:fontsize=24:x=(w-text_w)/2:y=300," +
-                   f"drawtext=text='Error details: {safe_error}':fontcolor=red:fontsize=18:x=(w-text_w)/2:y=400",
-            "-c:v", "libx264", "-pix_fmt", "yuv420p", str(dummy_video_path)
-        ]
-        
-        logger.info(f"Running FFmpeg command for error video")
-        result = subprocess.run(ffmpeg_cmd, check=False, capture_output=True, text=True)
-        
-        if result.returncode != 0:
-            logger.error(f"FFmpeg error: {result.stderr}")
-            # Create a text file with the error instead
-            with open(dummy_video_path.with_suffix('.txt'), 'w') as f:
-                f.write(f"Error creating animation: {error_message}\nFFmpeg error: {result.stderr}")
-            # Still create an empty MP4 file so the API can return something
-            dummy_video_path.touch()
-        else:
-            logger.info(f"Successfully created dummy error video at {dummy_video_path}")
-            
-        # Return in the same format as create_video
-        return {"local_path": str(dummy_video_path)}
+        # Return the direct S3 URL instead of local path
+        return {"local_path": str(dummy_video_path), "s3_url": error_video_url}
     except Exception as e:
-        logger.error(f"Failed to create dummy video: {str(e)}")
+        logger.error(f"Failed to create dummy video reference: {str(e)}")
+        dummy_video_path = MEDIA_DIR / f"{job_id}.mp4"
         dummy_video_path.touch()
-        return {"local_path": str(dummy_video_path)}
+        # Even in case of exception, return the direct URL
+        return {"local_path": str(dummy_video_path), "s3_url": "https://manim-ai-videos.s3.us-east-1.amazonaws.com/videos/ec808a73-d0e8-4573-9057-5c1580fa1e11.mp4"}
 
 if __name__ == "__main__":
     import uvicorn
