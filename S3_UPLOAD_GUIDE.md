@@ -50,7 +50,7 @@ python upload_to_s3.py path/to/your/directory
 
 This will upload all files in the directory to your S3 bucket with the prefix `uploads/directory/`.
 
-To specify a custom S3 prefix:
+To specify a custom S3 prefix
 
 ```bash
 python upload_to_s3.py path/to/your/directory --key custom/path/
