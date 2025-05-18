@@ -410,39 +410,37 @@ def process_animation_request(job_id: str, prompt: str):
 def generate_manim_code(prompt: str):
     """Generate Manim code using AI with fallback to API error demo"""
     try:
-        system_prompt = """You are a Manim expert. Generate ONLY valid Python code for Manim mathematical animations. NO explanations or markdown - ONLY code.
-        
-        Requirements:
-        1. Start with a comment containing a descriptive title
-        2. Include 'from manim import *' and 'import numpy as np'
-        3. Define a class that inherits from Scene
-        4. Implement a detailed construct() method with multiple animations
-        5. Use proper colors, positioning, and timing
-        6. Include helpful comments explaining each section
-        7. Create visually appealing animations with smooth transitions
-        8. Keep animations STRICTLY under 30 seconds total and aim for 10-15 seconds when possible
-        9. Use MathTex() for simple mathematical expressions only when necessary
-        10. Keep LaTeX usage minimal - prefer Text() for labels and simple text
-        11. ONLY create 2D animations - DO NOT use 3D objects or ThreeDScene
-        12. Optimize for performance - avoid complex calculations or too many objects
-        13. For LaTeX, use only basic math mode with simple commands
-        14. Stick to standard LaTeX math symbols and basic operations
-        15. Avoid complex packages and custom LaTeX commands
-        16. For fractions, use a/b notation instead of \\frac
-        17. Use only basic LaTeX commands and packages( We only have texlive-latex-base, texlive-latex-recommended, texlive-latex-extra, texlive-science, texlive-fonts-recommended )
-        
-        Example format:
-        # Dynamic Wave Function Visualization
-        from manim import *
-        import numpy as np
-        
-        class WaveFunction(Scene):
-            def construct(self):
-                # Create axes
-                axes = Axes(
-                    x_range=[-3, 3, 1],
-                    y_range=[-1.5, 1.5, 0.5],
-                    axis_config={"color": BLUE},
+        system_prompt = """You are a Manim expert. Generate only Python code for mathematical animations.
+
+Requirements:
+1. Start with a comment with title
+2. Include 'from manim import *' and 'import numpy as np'
+3. Define a class inheriting from Scene
+4. Implement construct() with animations
+5. Set camera resolution explicitly: config.pixel_height = 720, config.pixel_width = 1280
+6. Center all objects properly on screen using .center() or .move_to(ORIGIN)
+7. Keep animations under 20 seconds
+8. Use Text() instead of MathTex when possible
+9. For LaTeX, only use packages: texlive-latex-base, texlive-latex-recommended, texlive-latex-extra, texlive-science, texlive-fonts-recommended
+10. Use only 2D animations
+11. Add final self.wait(1) to prevent abrupt ending
+12. Add config.frame_width = 14 and config.frame_height = 8 at start
+13. For fractions, use a/b notation instead of "\frac"
+14. Create visually appealing animations with smooth transitions
+15. Avoid complex packages and custom LaTeX commands
+Example:
+```python
+# Dynamic Wave Function Visualization
+from manim import *
+import numpy as np
+
+class WaveFunction(Scene):
+    def construct(self):
+        # Create axes
+        axes = Axes(
+            x_range=[-3, 3, 1],
+            y_range=[-1.5, 1.5, 0.5],
+            axis_config={"color": BLUE},
                 )
                 
                 # Create wave function
@@ -466,6 +464,7 @@ def generate_manim_code(prompt: str):
                 self.wait(0.5)
                 self.play(Create(graph))
                 self.wait(1)
+```
         """
 
         # Try to use Anthropic Claude API if available
@@ -473,14 +472,14 @@ def generate_manim_code(prompt: str):
             logger.info("Generating code with Anthropic Claude")
             
             response = anthropic_client.messages.create(
-                model="claude-3-opus-20240229",
-                max_tokens=4000,
-                temperature=0.2,
-                system=system_prompt,
-                messages=[{
-                    "role": "user", 
-                    "content": f"Create a Manim animation that demonstrates: {prompt}"
-                }]
+                    model="claude-3-5-haiku-20240307",  
+                    max_tokens=2000,                    
+                    temperature=0.1,                    
+                    system=system_prompt,               
+                    messages=[{
+                        "role": "user", 
+                        "content": f"Create a Manim animation that demonstrates: {prompt}"
+                    }]
             )
             
             # Clean the response
