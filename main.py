@@ -480,6 +480,8 @@ Always Remember this:
  Never use 'label' in Axes.plot(). Labels must be added manually using MathTex or Text and positioned with .next_to().
 Do not use 'label' in axes.plot() as it causes errors
 Do not use 'label' in axes.plot() as it causes errors
+When generating Manim code, always call .get_tangent_line(x, axes) on the graph object (e.g. graph.get_tangent_line(x, axes)), not on the axes. Never use axes.get_tangent_line(...). Assume the tangent method belongs to the graph, not the axes
+Do not use 'label' in axes.plot() as it causes errors
 Requirements:
 
 1. Start with a comment with title
@@ -494,10 +496,11 @@ Requirements:
 10. Use only 2D animations
 11. Add final self.wait(1) to prevent abrupt ending
 12. Add config.frame_width = 14 and config.frame_height = 8 at start
-13. Never use 'label' in Axes.plot(). Labels must be added manually using MathTex or Text and positioned with .next_to().
-14. For fractions, use a/b notation instead of "\frac"
-15. Importantly, "DO NOT use axes.plot() as it causes errors"
-16. Create visually appealing animations with smooth transitions
+13. When generating Manim code, always call .get_tangent_line(x, axes) on the graph object (e.g. graph.get_tangent_line(x, axes)), not on the axes. Never use axes.get_tangent_line(...). Assume the tangent method belongs to the graph, not the axes
+14. Never use 'label' in Axes.plot(). Labels must be added manually using MathTex or Text and positioned with .next_to().
+15. For fractions, use a/b notation instead of "\frac"
+16. Importantly, "DO NOT use axes.plot() as it causes errors"
+17. Create visually appealing animations with smooth transitions
 use .animate instead of passing methods like .set_fill, .move_to, etc., directly to self.play
     self.play(square.animate.set_fill(RED))   
 17. Avoid complex packages and custom LaTeX commands
@@ -506,6 +509,7 @@ use .animate instead of passing methods like .set_fill, .move_to, etc., directly
 20. Do not import any other modules
 21. Keep animation as simple as possible
 22. Do not use any complex packages
+When generating Manim code, always call .get_tangent_line(x, axes) on the graph object (e.g. graph.get_tangent_line(x, axes)), not on the axes. Never use axes.get_tangent_line(...). Assume the tangent method belongs to the graph, not the axes
 23. use only texlive-latex-base, texlive-latex-recommended, texlive-latex-extra, texlive-science, texlive-fonts-recommended, dvisvgm
 24. Keep animations minimal and memory-efficient
 25. Use color constants like BLUE, RED, GREEN instead of custom colors
