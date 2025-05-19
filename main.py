@@ -286,7 +286,7 @@ def setup_periodic_cleanup():
     async def periodic_cleanup():
         while True:
             await run_in_threadpool(cleanup_old_jobs)
-            await asyncio.sleep(600)  # Run cleanup every hour
+            await asyncio.sleep(540)  # Run cleanup every hour
     
     asyncio.create_task(periodic_cleanup())
 
@@ -299,7 +299,7 @@ def cleanup_old_jobs():
         # Find jobs older than 24 hours
         for job_id, job_data in generation_jobs.items():
             job_age = current_time - job_data.get("created_at", current_time)
-            if job_age > 86400:  # 24 hours in seconds
+            if job_age > 300:  # 24 hours in seconds
                 jobs_to_remove.append(job_id)
         
         # Remove old jobs from memory
@@ -471,7 +471,8 @@ def process_animation_request(job_id: str, prompt: str):
 def generate_manim_code(prompt: str):
     """Generate Manim code using AI with fallback to API error demo"""
     try:
-        system_prompt = """You are a Manim expert. Generate only Python code for mathematical animations.
+        system_prompt = """You are a Manim expert. You are using Manim 0.18.0 version so use syntax in that version properly. 
+        Note:Generate only Python code for mathematical animations.
 
 Requirements:
 1. Start with a comment with title
