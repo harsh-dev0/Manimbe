@@ -487,7 +487,7 @@ Requirements:
 11. Add final self.wait(1) to prevent abrupt ending
 12. Add config.frame_width = 14 and config.frame_height = 8 at start
 13. For fractions, use a/b notation instead of "\frac"
-DO NOT use axes.plot() as it causes errors
+Importantly, "DO NOT use axes.plot() as it causes errors"
 14. Create visually appealing animations with smooth transitions
 15. Avoid complex packages and custom LaTeX commands
 16. Only Return the python code and nothing else
