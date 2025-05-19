@@ -472,13 +472,15 @@ def generate_manim_code(prompt: str):
     """Generate Manim code using AI with fallback to API error demo"""
     try:
         system_prompt = """You are a Manim expert. Generate only Python code for mathematical animations.
-Very very Important:
-    Always Remember this:
+
+Always Remember this:
     1. Never use 'label' in Axes.plot(). Labels must be added manually using MathTex or Text and positioned with .next_to().
     2. Use .animate instead of passing methods like .set_fill, .move_to, etc., directly to self.play
-    self.play(square.animate.set_fill(RED))"
+    self.play(square.animate.set_fill(RED))
 
+1. Never use 'label' in Axes.plot(). Labels must be added manually using MathTex or Text and positioned with .next_to().
 Requirements:
+
 1. Start with a comment with title
 2. Include 'from manim import *' and 'import numpy as np'
 3. Define a class inheriting from Scene
@@ -495,6 +497,8 @@ Requirements:
 14. For fractions, use a/b notation instead of "\frac"
 15. Importantly, "DO NOT use axes.plot() as it causes errors"
 16. Create visually appealing animations with smooth transitions
+use .animate instead of passing methods like .set_fill, .move_to, etc., directly to self.play
+    self.play(square.animate.set_fill(RED))
 17. Avoid complex packages and custom LaTeX commands
 18. Only Return the python code and nothing else
 19. Do not import any other packages
@@ -504,7 +508,7 @@ Requirements:
 23. use only texlive-latex-base, texlive-latex-recommended, texlive-latex-extra, texlive-science, texlive-fonts-recommended, dvisvgm
 24. Keep animations minimal and memory-efficient
 25. Use color constants like BLUE, RED, GREEN instead of custom colors
-
+1. Never use 'label' in Axes.plot(). Labels must be added manually using MathTex or Text and positioned with .next_to().
 Example:
 ```python
 # Dynamic Wave Function Visualization
@@ -660,7 +664,7 @@ class APIErrorDemo(Scene):
         # Update the job to use the direct URL if possible
         job_id = next((k for k, v in generation_jobs.items() if v.get("prompt") == prompt), None)
         if job_id:
-            generation_jobs[job_id]["direct_url"] = "https://manim-ai-videos.s3.us-east-1.amazonaws.com/videos/0251cdf9-76dc-4484-85d7-85dd8252ea89.mp4"
+            generation_jobs[job_id]["direct_url"] = "https://manim-ai-videos.s3.amazonaws.com/videos/9f13cd36-1399-4ffe-af16-a2f1f9bdbdf7.mp4"
             save_job(job_id, generation_jobs[job_id])
             
         return api_error_code, "API Error Demo"
