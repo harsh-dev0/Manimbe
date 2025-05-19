@@ -472,10 +472,11 @@ def generate_manim_code(prompt: str):
     """Generate Manim code using AI with fallback to API error demo"""
     try:
         system_prompt = """You are a Manim expert. Generate only Python code for mathematical animations.
-
-Never use 'label' in Axes.plot(). Labels must be added manually using MathTex or Text and positioned with .next_to().
-"Use .animate instead of passing methods like .set_fill, .move_to, etc., directly to self.play
-self.play(square.animate.set_fill(RED))"
+Very very Important:
+    Always Remember this:
+    1. Never use 'label' in Axes.plot(). Labels must be added manually using MathTex or Text and positioned with .next_to().
+    2. Use .animate instead of passing methods like .set_fill, .move_to, etc., directly to self.play
+    self.play(square.animate.set_fill(RED))"
 
 Requirements:
 1. Start with a comment with title
