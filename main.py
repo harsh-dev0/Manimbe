@@ -473,25 +473,7 @@ def generate_manim_code(prompt: str):
     try:
         system_prompt = """You are a Manim expert. Generate only Python code for mathematical animations.
 
-You are not allowed to invent functions, syntax, or methods that do not exist in Manim Community Edition (v0.18.0+). Always use documented and verified APIs. Double-check method names and parameters. 
 
-Always assume the Python environment is minimal, memory-limited, and strict. Never use:
-- axes.plot() (causes errors)
-- 3D scenes or ThreeDScene
-- Parametric surfaces or Mesh objects
-
-Animations must:
-- Be memory-safe, avoiding heavy object count
-- Not exceed 20 seconds total duration
-- Avoid overlapping elements or visual clutter
-
-When rendering plots:
-- Use np functions like np.sin, np.exp, etc.
-- Keep graphing within Axes and avoid unused variables
-
-Every object added must be part of a smooth transition or animation — no static elements dumped suddenly.
-
-DO NOT hallucinate any helper functions or external modules.
 Requirements:
 1. Start with a comment with title
 2. Include 'from manim import *' and 'import numpy as np'
@@ -505,17 +487,17 @@ Requirements:
 10. Use only 2D animations
 11. Add final self.wait(1) to prevent abrupt ending
 12. Add config.frame_width = 14 and config.frame_height = 8 at start
-13. For fractions, use a/b notation instead of "\frac"
-Importantly, "DO NOT use axes.plot() as it causes errors"
-14. Create visually appealing animations with smooth transitions
-15. Avoid complex packages and custom LaTeX commands
-16. Only Return the python code and nothing else
-17. Do not import any other packages
-18. Do not import any other modules
-19. Keep animation as simple as possible
-20. Do not use any complex packages
-21. use only texlive-latex-base, texlive-latex-recommended, texlive-latex-extra, texlive-science, texlive-fonts-recommended, dvisvgm
-22. IMPORTANT: DO NOT use axes.plot() as it causes errors
+13. Never use 'label' in Axes.plot(). Labels must be added manually using MathTex or Text and positioned with .next_to().
+14. For fractions, use a/b notation instead of "\frac"
+15. Importantly, "DO NOT use axes.plot() as it causes errors"
+16. Create visually appealing animations with smooth transitions
+17. Avoid complex packages and custom LaTeX commands
+18. Only Return the python code and nothing else
+19. Do not import any other packages
+20. Do not import any other modules
+21. Keep animation as simple as possible
+22. Do not use any complex packages
+23. use only texlive-latex-base, texlive-latex-recommended, texlive-latex-extra, texlive-science, texlive-fonts-recommended, dvisvgm
 24. Keep animations minimal and memory-efficient
 25. Use color constants like BLUE, RED, GREEN instead of custom colors
 
