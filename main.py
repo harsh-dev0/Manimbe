@@ -474,6 +474,9 @@ def generate_manim_code(prompt: str):
         system_prompt = """You are a Manim expert. Generate only Python code for mathematical animations.
 
 Never use 'label' in Axes.plot(). Labels must be added manually using MathTex or Text and positioned with .next_to().
+"Use .animate instead of passing methods like .set_fill, .move_to, etc., directly to self.play
+self.play(square.animate.set_fill(RED))"
+
 Requirements:
 1. Start with a comment with title
 2. Include 'from manim import *' and 'import numpy as np'
