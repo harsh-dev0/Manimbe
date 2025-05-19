@@ -299,7 +299,7 @@ def cleanup_old_jobs():
         # Find jobs older than 24 hours
         for job_id, job_data in generation_jobs.items():
             job_age = current_time - job_data.get("created_at", current_time)
-            if job_age > 300:  # 24 hours in seconds
+            if job_age > 600:  # 24 hours in seconds
                 jobs_to_remove.append(job_id)
         
         # Remove old jobs from memory
@@ -471,8 +471,7 @@ def process_animation_request(job_id: str, prompt: str):
 def generate_manim_code(prompt: str):
     """Generate Manim code using AI with fallback to API error demo"""
     try:
-        system_prompt = """You are a Manim expert. You are using Manim 0.18.0 version so use syntax in that version properly. 
-        Note:Generate only Python code for mathematical animations.
+        system_prompt = """You are a Manim expert. Generate only Python code for mathematical animations.
 
 Requirements:
 1. Start with a comment with title
@@ -488,6 +487,7 @@ Requirements:
 11. Add final self.wait(1) to prevent abrupt ending
 12. Add config.frame_width = 14 and config.frame_height = 8 at start
 13. For fractions, use a/b notation instead of "\frac"
+DO NOT use axes.plot() as it causes errors
 14. Create visually appealing animations with smooth transitions
 15. Avoid complex packages and custom LaTeX commands
 16. Only Return the python code and nothing else
@@ -495,7 +495,11 @@ Requirements:
 18. Do not import any other modules
 19. Keep animation as simple as possible
 20. Do not use any complex packages
-21. use only texlive-latex-base, texlive-latex-recommended, texlive-latex-extra, texlive-science, texlive-fonts-recommended
+21. use only texlive-latex-base, texlive-latex-recommended, texlive-latex-extra, texlive-science, texlive-fonts-recommended, dvisvgm
+22. IMPORTANT: DO NOT use axes.plot() as it causes errors
+24. Keep animations minimal and memory-efficient
+25. Use color constants like BLUE, RED, GREEN instead of custom colors
+
 Example:
 ```python
 # Dynamic Wave Function Visualization
@@ -626,7 +630,7 @@ class APIErrorDemo(Scene):
         # Update the job to use the direct URL
         job_id = next((k for k, v in generation_jobs.items() if v.get("prompt") == prompt), None)
         if job_id:
-            generation_jobs[job_id]["direct_url"] = "https://manim-ai-videos.s3.us-east-1.amazonaws.com/videos/0251cdf9-76dc-4484-85d7-85dd8252ea89.mp4"
+            generation_jobs[job_id]["direct_url"] = "https://manim-ai-videos.s3.amazonaws.com/videos/9f13cd36-1399-4ffe-af16-a2f1f9bdbdf7.mp4"
             save_job(job_id, generation_jobs[job_id])
             
         return api_error_code, "API Error Demo"
