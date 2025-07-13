@@ -1,13 +1,15 @@
 # VisuaMath Forge API
 
-VisuaMath Forge is a web API service that generates mathematical animations using the Manim library driven by AI. The service takes natural language prompts and converts them into visual mathematical demonstrations using either Claude or Groq AI models.
+VisuaMath Forge is a web API service that generates mathematical animations using the Manim library driven by AI. The service takes natural language prompts and converts them into visual mathematical demonstrations using Gemini (primary) and Claude (fallback) AI models.
 
 ## Features
 
 - Convert natural language prompts into Manim animations
-- AI-powered code generation using Claude and Groq models (with fallback options)
+- AI-powered code generation using Gemini 1.5 Flash (primary) and Claude models (fallback)
+- BYOK (Bring Your Own Key) support for Gemini API
 - RESTful API with background task processing
 - Support for both local file storage and S3 cloud storage
+- Videos uploaded to S3 with prompt-based filenames for better organization
 - Job status tracking and management
 - Automatic cleanup of old jobs and resources
 
@@ -16,7 +18,8 @@ VisuaMath Forge is a web API service that generates mathematical animations usin
 - Python 3.8+
 - FastAPI
 - Manim animation library
-- Anthropic or Groq API access (optional but recommended)
+- Google Gemini API access (recommended)
+- Anthropic Claude API access (fallback)
 - AWS S3 access for cloud storage (optional)
 
 ## Installation
@@ -35,7 +38,7 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 
 3. Install dependencies:
 ```bash
-pip install fastapi uvicorn python-dotenv anthropic boto3 groq
+pip install fastapi uvicorn python-dotenv google-generativeai anthropic boto3
 pip install manim
 ```
 
@@ -57,8 +60,8 @@ brew cask install mactex
 1. Create a `.env` file in the project root:
 ```bash
 # API Keys (use at least one)
-ANTHROPIC_API_KEY=your_anthropic_api_key_here
-GROQ_API_KEY=your_groq_api_key_here
+GEMINI_API_KEY=your_gemini_api_key_here  # Primary AI model
+ANTHROPIC_API_KEY=your_anthropic_api_key_here  # Fallback AI model
 
 # AWS S3 Configuration (optional)
 AWS_ACCESS_KEY_ID=your_aws_access_key
@@ -105,7 +108,18 @@ python main.py
 
 ### Example Usage
 
-To generate a new animation:
+To generate a new animation with BYOK (Bring Your Own Key) for Gemini:
+
+```bash
+curl -X POST "http://localhost:8000/generate" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "prompt": "Show the concept of integration as the area under a curve",
+    "gemini_api_key": "your_gemini_api_key_here"
+  }'
+```
+
+Or without BYOK (uses global API key):
 
 ```bash
 curl -X POST "http://localhost:8000/generate" \
@@ -131,10 +145,31 @@ Response (when complete):
 {
   "id": "12345678-1234-5678-1234-567812345678",
   "status": "completed",
-  "video_url": "https://your-bucket.s3.amazonaws.com/videos/12345678-1234-5678-1234-567812345678.mp4",
+  "video_url": "https://your-bucket.s3.amazonaws.com/videos/integration_as_area_under_curve_a1b2c3d4.mp4",
   "title": "Integration as Area Under a Curve"
 }
 ```
+
+## AI Model Priority
+
+The service uses the following priority for AI code generation:
+
+1. **Gemini 1.5 Flash** (Primary) - Uses the best available Gemini model
+   - Supports BYOK (Bring Your Own Key) from request
+   - Falls back to global GEMINI_API_KEY if no BYOK provided
+   
+2. **Claude 3.5 Haiku** (Fallback) - Used when Gemini is unavailable or fails
+   - Uses global ANTHROPIC_API_KEY
+
+3. **Error Demo Video** - Final fallback when both AI models fail
+
+## S3 File Naming
+
+Videos uploaded to S3 use prompt-based filenames for better organization:
+- Original prompt: "Show the concept of integration as the area under a curve"
+- S3 filename: `integration_as_area_under_curve_a1b2c3d4.mp4`
+- Special characters are removed, spaces become underscores
+- A hash is added for uniqueness
 
 ## Error Handling
 
@@ -180,9 +215,13 @@ When deployed to cloud platforms, configure environment variables instead of usi
   - Ensure Manim and its dependencies are correctly installed
   - Check for LaTeX errors in the logs
   - Make sure FFmpeg is installed and accessible
-
+- If Gemini API fails:
+  - Check your API key is valid
+  - Verify you have sufficient quota
+  - Try using BYOK with a different API key
 
 ## Credits
 
 - Manim: Mathematical Animation Engine by 3Blue1Brown (Grant Sanderson)
-- Anthropic's Claude and Groq's Models for AI-powered code generation
+- Google's Gemini models for AI-powered code generation
+- Anthropic's Claude models for fallback AI generation
