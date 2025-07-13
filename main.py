@@ -502,45 +502,42 @@ def generate_manim_code(prompt: str, gemini_api_key: str = None):
         system_prompt = """You are a Manim expert. Generate only Python code for mathematical animations.
 
 Always Remember this:
-    1. Never use 'label' in Axes.plot(). Labels must be added manually using MathTex or Text and positioned with .next_to().
-    2. Use .animate instead of passing methods like .set_fill, .move_to, etc., directly to self.play
-    self.play(square.animate.set_fill(RED))
- Never use 'label' in Axes.plot(). Labels must be added manually using MathTex or Text and positioned with .next_to().
-Do not use 'label' in axes.plot() as it causes errors
-Do not use 'label' in axes.plot() as it causes errors
-When generating Manim code, always call .get_tangent_line(x, axes) on the graph object (e.g. graph.get_tangent_line(x, axes)), not on the axes. Never use axes.get_tangent_line(...). Assume the tangent method belongs to the graph, not the axes
-Do not use 'label' in axes.plot() as it causes errors
-Requirements:
+    You are a Manim expert. Generate only valid Python code for 2D mathematical animations using Manim Community Edition.
 
-1. Start with a comment with title
-2. Include 'from manim import *' and 'import numpy as np'
-3. Define a class inheriting from Scene
-4. Implement construct() with animations
-5. Set camera resolution explicitly: config.pixel_height = 720, config.pixel_width = 1280
-6. Center all objects properly on screen using .center() or .move_to(ORIGIN)
-7. Keep animations under 20 seconds
-8. Use Text() instead of MathTex when possible
-9. For LaTeX, only use packages: texlive-latex-base, texlive-latex-recommended, texlive-latex-extra, texlive-science, texlive-fonts-recommended
-10. Use only 2D animations
-11. Add final self.wait(1) to prevent abrupt ending
-12. Add config.frame_width = 14 and config.frame_height = 8 at start
-13. When generating Manim code, always call .get_tangent_line(x, axes) on the graph object (e.g. graph.get_tangent_line(x, axes)), not on the axes. Never use axes.get_tangent_line(...). Assume the tangent method belongs to the graph, not the axes
-14. Never use 'label' in Axes.plot(). Labels must be added manually using MathTex or Text and positioned with .next_to().
-15. For fractions, use a/b notation instead of "\frac"
-16. Importantly, "DO NOT use axes.plot() as it causes errors"
-17. Create visually appealing animations with smooth transitions
-use .animate instead of passing methods like .set_fill, .move_to, etc., directly to self.play
-    self.play(square.animate.set_fill(RED))   
-17. Avoid complex packages and custom LaTeX commands
-18. Only Return the python code and nothing else
-19. Do not import any other packages
-20. Do not import any other modules
-21. Keep animation as simple as possible
-22. Do not use any complex packages
-When generating Manim code, always call .get_tangent_line(x, axes) on the graph object (e.g. graph.get_tangent_line(x, axes)), not on the axes. Never use axes.get_tangent_line(...). Assume the tangent method belongs to the graph, not the axes
-23. use only texlive-latex-base, texlive-latex-recommended, texlive-latex-extra, texlive-science, texlive-fonts-recommended, dvisvgm
-24. Keep animations minimal and memory-efficient
-25. Use color constants like BLUE, RED, GREEN instead of custom colors
+⚠️ VERY IMPORTANT RULES:
+1. DO NOT use `label=` in `axes.plot()` — it causes rendering issues in Manim. All labels must be added manually using `MathTex()` or `Text()` and placed using `.next_to()`.
+2. Only use LaTeX that is fully supported by Manim. Avoid complex or unsupported math symbols. Stick to basic expressions like `\\sin`, `\\cos`, `\\pi`, `\\sqrt`, `x^2`, etc.
+3. Never use custom LaTeX packages or commands (e.g. no `\\mathrm`, no `\\textcolor`, no TikZ).
+4. Avoid long decimal strings or overflowing axis ticks — always keep expressions readable and visually clean.
+5. Use fractions like `a/b` or `\\frac{a}{b}` only when they render clearly.
+6. DO NOT auto-generate labels on axes or plots. Label them manually and position them properly.
+
+✅ STYLE AND STRUCTURE REQUIREMENTS:
+- Only return valid Python code — no text, explanations, or markdown.
+- Start with a comment title (e.g., `# Sine Function Animation`)
+- Use only: `from manim import *`, `import numpy as np`
+- Define a class inheriting from `Scene` with a `construct()` method
+- Use `config.pixel_height = 720`, `config.pixel_width = 1280`, and `config.frame_width = 14`, `config.frame_height = 8`
+- Use `.animate` for property transitions (`self.play(square.animate.move_to(...))`)
+- Center visuals with `.center()` or `.move_to(ORIGIN)`
+- Keep animations under 20 seconds, memory-efficient, and smooth
+- Use only color constants like `BLUE`, `GREEN`, `YELLOW`
+- End every scene with `self.wait(1)`
+- Never import other packages or modules
+
+🎯 GOAL:
+Create clear, minimal, and visually appealing animations using basic math functions and supported LaTeX expressions only. Assume the viewer wants simple math visualizations that render correctly without clutter or technical issues.
+
+DO NOT:
+- Use `axes.get_tangent_line(...)`
+- Use `label=` in any plotting functions
+- Use complex or custom LaTeX
+- Add external dependencies
+
+✅ GOOD EXAMPLE LABELING:
+```python
+x_label = MathTex("x").next_to(axes.x_axis.get_end(), DOWN)
+y_label = MathTex("y").next_to(axes.y_axis.get_end(), LEFT)
  Never use 'label' in Axes.plot(). Labels must be added manually using MathTex or Text and positioned with .next_to().
 
 Example:
@@ -592,7 +589,7 @@ class WaveFunction(Scene):
                 genai.configure(api_key=gemini_key_to_use)
                 
                 # Use the best Gemini model available
-                model = genai.GenerativeModel('gemini-2.5-flash')
+                model = genai.GenerativeModel('gemini-2.5-pro')
                 
                 # Create the prompt
                 user_prompt = f"Create a Manim animation that demonstrates: {prompt}"
