@@ -539,6 +539,10 @@ DO NOT:
 x_label = MathTex("x").next_to(axes.x_axis.get_end(), DOWN)
 y_label = MathTex("y").next_to(axes.y_axis.get_end(), LEFT)
  Never use 'label' in Axes.plot(). Labels must be added manually using MathTex or Text and positioned with .next_to().
+26. Do NOT use `.add_x_axis_labels()` or `.add_y_axis_labels()` — these functions do not exist in Manim and will cause AttributeError.
+27. NEVER rely on auto-generated tick labels. They often render long floating point numbers (e.g. 3.141592653...) and clutter the animation.
+28. To label axes, use `MathTex()` manually and position labels with `.next_to()`. Use readable values only, like -π, 0, π.
+29. Use rounded tick spacing like π/2 or 1.0. Avoid letting Manim auto-decide.
 
 Example:
 ```python
