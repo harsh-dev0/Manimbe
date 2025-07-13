@@ -8,6 +8,7 @@ from pydantic import BaseModel
 from s3_storage import S3Storage
 
 from anthropic import Anthropic
+import google.generativeai as genai
 import os
 import subprocess
 import uuid
@@ -19,6 +20,7 @@ import time
 import json
 import sys
 import re
+import hashlib
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -70,25 +72,29 @@ else:
 
 
 try:
+    # Initialize Gemini client with global API key (for fallback)
+    gemini_api_key = os.environ.get("GEMINI_API_KEY")
+    if gemini_api_key:
+        genai.configure(api_key=gemini_api_key)
+        gemini_client = genai.GenerativeModel('gemini-1.5-flash')
+        logger.info("Gemini client initialized successfully")
+    else:
+        gemini_client = None
+        logger.warning("No global Gemini API key found")
+    
+    # Initialize Anthropic client
     anthropic_api_key = os.environ.get("ANTHROPIC_API_KEY")
     if anthropic_api_key:
         anthropic_client = Anthropic(api_key=anthropic_api_key)
         logger.info("Anthropic client initialized successfully")
     else:
-        groq_api_key = os.environ.get("GROQ_API_KEY")
-        if groq_api_key:
-            import groq
-            groq_client = groq.Client(api_key=groq_api_key)
-            logger.info("Groq client initialized successfully")
-            anthropic_client = None
-        else:
-            logger.warning("No API keys found for LLM services")
-            anthropic_client = None
-            groq_client = None
+        logger.warning("No Anthropic API key found")
+        anthropic_client = None
+        
 except Exception as e:
     logger.error(f"Error initializing LLM clients: {e}")
     anthropic_client = None
-    groq_client = None
+    gemini_client = None
 
 DEV_MODE = os.environ.get("DEV_MODE", "0") == "1"
 if DEV_MODE:
@@ -96,6 +102,7 @@ if DEV_MODE:
 
 class PromptRequest(BaseModel):
     prompt: str
+    gemini_api_key: str = None  # BYOK support for Gemini
 
 class ManimGenerationResponse(BaseModel):
     id: str
@@ -129,6 +136,21 @@ def save_job(job_id, job_data):
         logger.info(f"Saved job {job_id} to disk")
     except Exception as e:
         logger.error(f"Error saving job {job_id}: {e}")
+
+def sanitize_filename(prompt: str) -> str:
+    """Convert prompt to a safe filename for S3 upload"""
+    # Remove special characters and replace spaces with underscores
+    sanitized = re.sub(r'[^a-zA-Z0-9\s\-_]', '', prompt)
+    sanitized = re.sub(r'\s+', '_', sanitized)
+    sanitized = sanitized.strip('_')
+    
+    # Limit length and add hash for uniqueness
+    if len(sanitized) > 50:
+        sanitized = sanitized[:50]
+    
+    # Add hash for uniqueness
+    prompt_hash = hashlib.md5(prompt.encode()).hexdigest()[:8]
+    return f"{sanitized}_{prompt_hash}"
 
 @app.get("/")
 def read_root():
@@ -166,7 +188,8 @@ async def generate_animation(request: PromptRequest, background_tasks: Backgroun
     job_data = {
         "status": "processing",
         "created_at": time.time(),
-        "prompt": request.prompt
+        "prompt": request.prompt,
+        "gemini_api_key": request.gemini_api_key  # Store BYOK key
     }
     generation_jobs[job_id] = job_data
     save_job(job_id, job_data)
@@ -175,7 +198,8 @@ async def generate_animation(request: PromptRequest, background_tasks: Backgroun
         background_tasks.add_task(
             process_animation_request, 
             job_id=job_id, 
-            prompt=request.prompt
+            prompt=request.prompt,
+            gemini_api_key=request.gemini_api_key
         )
         return ManimGenerationResponse(
             id=job_id,
@@ -189,7 +213,8 @@ async def generate_animation(request: PromptRequest, background_tasks: Backgroun
             "status": "failed",
             "created_at": time.time(),
             "prompt": request.prompt,
-            "error": error_message
+            "error": error_message,
+            "gemini_api_key": request.gemini_api_key
         }
         
         generation_jobs[job_id] = job_data
@@ -330,7 +355,7 @@ def cleanup_old_jobs():
     except Exception as e:
         logger.error(f"Error during job cleanup: {str(e)}")
 
-def process_animation_request(job_id: str, prompt: str):
+def process_animation_request(job_id: str, prompt: str, gemini_api_key: str = None):
     try:
         logger.info(f"Processing animation request: {job_id}, prompt: {prompt}")
         
@@ -338,12 +363,13 @@ def process_animation_request(job_id: str, prompt: str):
         generation_jobs[job_id] = {
             "status": "processing",
             "prompt": prompt,
-            "created_at": time.time()
+            "created_at": time.time(),
+            "gemini_api_key": gemini_api_key
         }
         save_job(job_id, generation_jobs[job_id])
         
         # Generate Manim code
-        code, title = generate_manim_code(prompt)
+        code, title = generate_manim_code(prompt, gemini_api_key)
         if not code:
             raise ValueError("Failed to generate Manim code")
         
@@ -367,7 +393,7 @@ def process_animation_request(job_id: str, prompt: str):
             video_result = {"local_path": str(MEDIA_DIR / f"{job_id}.mp4"), "s3_url": direct_url}
         else:
             # Create the animation video normally
-            video_result = create_video(job_id, code_file_path)
+            video_result = create_video(job_id, code_file_path, prompt)
             logger.info(f"Video creation result: {video_result}")
         
         # Handle video storage (local or S3)
@@ -400,8 +426,9 @@ def process_animation_request(job_id: str, prompt: str):
                             region_name=aws_region
                         )
                         
-                        # Upload to S3
-                        s3_key = f"videos/{job_id}.mp4"
+                        # Create prompt-based filename for S3
+                        prompt_filename = sanitize_filename(prompt)
+                        s3_key = f"videos/{prompt_filename}.mp4"
                         logger.info(f"S3 upload: Uploading {output_path} to {bucket_name}/{s3_key}")
                         
                         with open(str(output_path), 'rb') as data:
@@ -462,14 +489,15 @@ def process_animation_request(job_id: str, prompt: str):
                 "created_at": time.time(),
                 "prompt": prompt,
                 "error": error_message,
-                "title": title
+                "title": title,
+                "gemini_api_key": gemini_api_key
             }
             
         save_job(job_id, generation_jobs[job_id])
         logger.info(f"Animation generation failed for job {job_id}")
 
-def generate_manim_code(prompt: str):
-    """Generate Manim code using AI with fallback to API error demo"""
+def generate_manim_code(prompt: str, gemini_api_key: str = None):
+    """Generate Manim code using AI with Gemini first, then Anthropic fallback"""
     try:
         system_prompt = """You are a Manim expert. Generate only Python code for mathematical animations.
 
@@ -554,78 +582,93 @@ class WaveFunction(Scene):
 ```
         """
 
-        # Try to use Anthropic Claude API if available
-        if 'anthropic_client' in globals() and anthropic_client:
-            logger.info("Generating code with Anthropic Claude")
-            
-            response = anthropic_client.messages.create(
-                    model="claude-3-5-haiku-20241022",  
-                    max_tokens=2000,                    
-                    temperature=0.1,                    
-                    system=system_prompt,               
-                    messages=[{
-                        "role": "user", 
-                        "content": f"Create a Manim animation that demonstrates: {prompt}"
-                    }]
-            )
-            
-            # Clean the response
-            code = response.content[0].text
-            # Remove any markdown code blocks
-            code = code.replace("```python", "").replace("```", "").strip()
-            # Extract title from first comment
-            title = None
-            lines = code.split('\n')
-            for line in lines:
-                if line.strip().startswith('#') and not line.strip().startswith('#!'):
-                    title = line.strip('# ').strip()
-                    break
+        # Try to use Gemini API first (BYOK or global key)
+        gemini_key_to_use = gemini_api_key or os.environ.get("GEMINI_API_KEY")
+        if gemini_key_to_use:
+            try:
+                logger.info("Generating code with Gemini (best model)")
+                
+                # Configure Gemini with the provided key
+                genai.configure(api_key=gemini_key_to_use)
+                
+                # Use the best Gemini model available
+                model = genai.GenerativeModel('gemini-2.5-flash')
+                
+                # Create the prompt
+                user_prompt = f"Create a Manim animation that demonstrates: {prompt}"
+                
+                # Generate response
+                response = model.generate_content([system_prompt, user_prompt])
+                
+                if response and response.text:
+                    # Clean the response
+                    code = response.text
+                    # Remove any markdown code blocks
+                    code = code.replace("```python", "").replace("```", "").strip()
                     
-            # Validate code structure
-            if 'from manim import' not in code or 'class' not in code or 'Scene' not in code:
-                logger.warning("Claude generated code missing required elements, trying Groq or fallback")
-            else:    
-                if code and title:
-                    logger.info("Successfully generated valid Manim code with Claude")
-                    return code, title
+                    # Extract title from first comment
+                    title = None
+                    lines = code.split('\n')
+                    for line in lines:
+                        if line.strip().startswith('#') and not line.strip().startswith('#!'):
+                            title = line.strip('# ').strip()
+                            break
+                            
+                    # Validate code structure
+                    if 'from manim import' not in code or 'class' not in code or 'Scene' not in code:
+                        logger.warning("Gemini generated code missing required elements, trying Anthropic")
+                    else:    
+                        if code and title:
+                            logger.info("Successfully generated valid Manim code with Gemini")
+                            return code, title
+                else:
+                    logger.warning("Gemini returned empty response, trying Anthropic")
+                    
+            except Exception as e:
+                logger.error(f"Error with Gemini API: {str(e)}")
+                logger.info("Trying fallback to Anthropic")
         
-        # Try to use Groq API if available and Claude failed or isn't available
-        if 'groq_client' in globals() and groq_client:
-            logger.info("Generating code with Groq")
-            
-            response = groq_client.chat.completions.create(
-                model="llama3-70b-8192",
-                messages=[
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": f"Create a Manim animation that demonstrates: {prompt}"}
-                ],
-                temperature=0.2,
-                max_tokens=4000
-            )
-            
-            # Clean the response
-            code = response.choices[0].message.content
-            # Remove any markdown code blocks
-            code = code.replace("```python", "").replace("```", "").strip()
-            # Extract title from first comment
-            title = None
-            lines = code.split('\n')
-            for line in lines:
-                if line.strip().startswith('#') and not line.strip().startswith('#!'):
-                    title = line.strip('# ').strip()
-                    break
-                    
-            # Validate code structure
-            if 'from manim import' not in code or 'class' not in code or 'Scene' not in code:
-                logger.warning("Groq generated code missing required elements, using API error fallback")
-            else:
-                if code and title:
-                    logger.info("Successfully generated valid Manim code with Groq")
-                    return code, title
+        # Try to use Anthropic Claude API if available and Gemini failed or isn't available
+        if 'anthropic_client' in globals() and anthropic_client:
+            try:
+                logger.info("Generating code with Anthropic Claude")
+                
+                response = anthropic_client.messages.create(
+                        model="claude-3-5-haiku-20241022",  
+                        max_tokens=2000,                    
+                        temperature=0.1,                    
+                        system=system_prompt,               
+                        messages=[{
+                            "role": "user", 
+                            "content": f"Create a Manim animation that demonstrates: {prompt}"
+                        }]
+                )
+                
+                # Clean the response
+                code = response.content[0].text
+                # Remove any markdown code blocks
+                code = code.replace("```python", "").replace("```", "").strip()
+                # Extract title from first comment
+                title = None
+                lines = code.split('\n')
+                for line in lines:
+                    if line.strip().startswith('#') and not line.strip().startswith('#!'):
+                        title = line.strip('# ').strip()
+                        break
+                        
+                # Validate code structure
+                if 'from manim import' not in code or 'class' not in code or 'Scene' not in code:
+                    logger.warning("Claude generated code missing required elements, using API error fallback")
+                else:    
+                    if code and title:
+                        logger.info("Successfully generated valid Manim code with Claude")
+                        return code, title
+                        
+            except Exception as e:
+                logger.error(f"Error with Anthropic API: {str(e)}")
         
         # If we get here, both APIs failed or aren't available
         logger.warning("No working LLM API found, using API error fallback")
-
 
         # Fallback to direct URL instead of generating API error demo code
         logger.warning("AI generation failed or not available, using direct API error video URL")
@@ -704,7 +747,7 @@ def detect_scene_class(code_file_path: Path):
         logger.error(f"Error detecting scene class: {str(e)}")
         return None
 
-def create_video(job_id: str, code_file_path: Path):
+def create_video(job_id: str, code_file_path: Path, prompt: str):
     try:
         output_path = MEDIA_DIR / f"{job_id}.mp4"
         scene_class = detect_scene_class(code_file_path)
@@ -800,10 +843,11 @@ scene.render()
             logger.info(f"S3 storage enabled in create_video: {s3_storage.is_enabled}")
             logger.info(f"S3 bucket name in create_video: {s3_storage.bucket_name}")
             
-            # If S3 is enabled, upload the video
+            # If S3 is enabled, upload the video with prompt-based filename
             if s3_storage.is_enabled:
                 logger.info(f"Attempting to upload video to S3: {output_path}")
-                s3_key = f"videos/{job_id}.mp4"
+                prompt_filename = sanitize_filename(prompt)
+                s3_key = f"videos/{prompt_filename}.mp4"
                 s3_url = s3_storage.upload_file(str(output_path), s3_key)
                 logger.info(f"S3 upload result: {s3_url}")
                 if s3_url:
@@ -819,9 +863,9 @@ scene.render()
 
     except Exception as e:
         logger.error(f"Error creating video: {str(e)}")
-        return create_dummy_video(job_id, str(e))
+        return create_dummy_video(job_id, str(e), prompt)
 
-def create_dummy_video(job_id: str, error_message: str):
+def create_dummy_video(job_id: str, error_message: str, prompt: str):
     try:
         dummy_video_path = MEDIA_DIR / f"{job_id}.mp4"
         
