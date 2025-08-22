@@ -76,7 +76,7 @@ try:
     gemini_api_key = os.environ.get("GEMINI_API_KEY")
     if gemini_api_key:
         genai.configure(api_key=gemini_api_key)
-        gemini_client = genai.GenerativeModel('gemini-2.0-flash')
+        gemini_client = genai.GenerativeModel('gemini-2.5-flash')
         logger.info("Gemini client initialized successfully")
     else:
         gemini_client = None
@@ -593,7 +593,7 @@ class WaveFunction(Scene):
                 genai.configure(api_key=gemini_key_to_use)
                 
                 # Use the best Gemini model available
-                model = genai.GenerativeModel('gemini-2.0-flash')
+                model = genai.GenerativeModel('gemini-2.5-flash')
                 
                 # Create the prompt
                 user_prompt = f"Create a Manim animation that demonstrates: {prompt}"
