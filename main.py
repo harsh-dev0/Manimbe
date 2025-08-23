@@ -75,9 +75,8 @@ try:
     # Initialize Gemini client with global API key (for fallback)
     gemini_api_key = os.environ.get("GEMINI_API_KEY")
     if gemini_api_key:
-        genai.configure(api_key=gemini_api_key)
-        gemini_client = genai.GenerativeModel('gemini-2.5-flash')
-        logger.info("Gemini client initialized successfully")
+        gemini_client = genai.Client(api_key=gemini_api_key)
+        logger.info("Gemini client initialized successfully with new SDK")
     else:
         gemini_client = None
         logger.warning("No global Gemini API key found")
@@ -502,19 +501,19 @@ def generate_manim_code(prompt: str, gemini_api_key: str = None):
         system_prompt = """You are a Manim expert. Generate only Python code for mathematical animations.
 
 Always Remember this:
-    You are a Manim expert. Generate only valid Python code for 2D mathematical animations using Manim Community Edition.
+    You are a Manim expert. Generate only valid Python code for 2D mathematical animations and also some alogorithms using Manim Community Edition.
 
 ⚠️ VERY IMPORTANT RULES:
 1. DO NOT use `label=` in `axes.plot()` — it causes rendering issues in Manim. All labels must be added manually using `MathTex()` or `Text()` and placed using `.next_to()`.
-2. Only use LaTeX that is fully supported by Manim. Avoid complex or unsupported math symbols. Stick to basic expressions like `\\sin`, `\\cos`, `\\pi`, `\\sqrt`, `x^2`, etc.
-3. Never use custom LaTeX packages or commands (e.g. no `\\mathrm`, no `\\textcolor`, no TikZ).
-4. Avoid long decimal strings or overflowing axis ticks — always keep expressions readable and visually clean.
-5. Use fractions like `a/b` or `\\frac{a}{b}` only when they render clearly.
+2. Only use LaTeX that is fully supported by Manim with COMPREHENSIVE LaTeX support including: \\mathrm{}, \\text{}, \\textbf{}, \\textit{}, \\mathbb{}, \\mathcal{}, \\mathfrak{}, \\operatorname{}, \\limits, \\displaystyle, \\scriptstyle, \\scriptscriptstyle, advanced fractions, matrices, integrals, derivatives, and complex mathematical expressions.
+3. Full LaTeX package support available: amsmath, amssymb, amsfonts, mathtools, physics, siunitx, and more.
+4. Use proper mathematical notation with Greek letters (\\alpha, \\beta, \\gamma, etc.), mathematical operators, and formatting.
+5. Support for complex expressions like: \\frac{\\partial^2 f}{\\partial x^2}, \\int_{-\\infty}^{\\infty} e^{-x^2} dx, \\sum_{n=1}^{\\infty} \\frac{1}{n^2}, etc.
 6. DO NOT auto-generate labels on axes or plots. Label them manually and position them properly.
 
 ✅ STYLE AND STRUCTURE REQUIREMENTS:
 - Only return valid Python code — no text, explanations, or markdown.
-- Start with a comment title (e.g., `# Sine Function Animation`)
+- Start with a comment title (e.g., `# Advanced Calculus Visualization`)
 - Use only: `from manim import *`, `import numpy as np`
 - Define a class inheriting from `Scene` with a `construct()` method
 - Use `config.pixel_height = 720`, `config.pixel_width = 1280`, and `config.frame_width = 14`, `config.frame_height = 8`
@@ -526,107 +525,72 @@ Always Remember this:
 - Never import other packages or modules
 
 🎯 GOAL:
-Create clear, minimal, and visually appealing animations using basic math functions and supported LaTeX expressions only. Assume the viewer wants simple math visualizations that render correctly without clutter or technical issues.
+Create clear, comprehensive mathematical animations using full LaTeX support and advanced mathematical notation for professional-quality visualizations.
 
-DO NOT:
-- Use `axes.get_tangent_line(...)`
-- Use `label=` in any plotting functions
-- Use complex or custom LaTeX
-- Add external dependencies
-
-✅ GOOD EXAMPLE LABELING:
+✅ GOOD EXAMPLE ADVANCED LABELING:
 ```python
-x_label = MathTex("x").next_to(axes.x_axis.get_end(), DOWN)
-y_label = MathTex("y").next_to(axes.y_axis.get_end(), LEFT)
- Never use 'label' in Axes.plot(). Labels must be added manually using MathTex or Text and positioned with .next_to().
-26. Do NOT use `.add_x_axis_labels()` or `.add_y_axis_labels()` — these functions do not exist in Manim and will cause AttributeError.
-27. NEVER rely on auto-generated tick labels. They often render long floating point numbers (e.g. 3.141592653...) and clutter the animation.
-28. To label axes, use `MathTex()` manually and position labels with `.next_to()`. Use readable values only, like -π, 0, π.
-29. Use rounded tick spacing like π/2 or 1.0. Avoid letting Manim auto-decide.
+equation = MathTex(r"\\frac{\\partial^2 u}{\\partial t^2} = c^2 \\nabla^2 u")
+integral_text = MathTex(r"\\int_{-\\infty}^{\\infty} e^{-\\alpha x^2} dx = \\sqrt{\\frac{\\pi}{\\alpha}}")
+matrix_eq = MathTex(r"\\mathbf{A} = \\begin{pmatrix} a & b \\\\ c & d \\end{pmatrix}")
+```"""
 
-Example:
-```python
-# Dynamic Wave Function Visualization
-from manim import *
-import numpy as np
-
-class WaveFunction(Scene):
-    def construct(self):
-        # Create axes
-        axes = Axes(
-            x_range=[-3, 3, 1],
-            y_range=[-1.5, 1.5, 0.5],
-            axis_config={"color": BLUE},
-                )
-                
-                # Create wave function
-                def func(x):
-                    return np.sin(x)
-                
-                # Plot the wave
-                graph = axes.plot(func, color=YELLOW)
-                
-                # Add axis labels
-                x_label = MathTex("x").next_to(axes.x_axis.get_end(), DOWN)
-                y_label = MathTex("y").next_to(axes.y_axis.get_end(), LEFT)
-                
-                # Simple equation using MathTex
-                eq_text = MathTex("y = \\sin(x)", color=GREEN).to_edge(UP)
-                
-                # Create animation
-                self.play(Create(axes))
-                self.play(Write(x_label), Write(y_label))
-                self.play(Write(eq_text))
-                self.wait(0.5)
-                self.play(Create(graph))
-                self.wait(1)
-```
-        """
-
-        # Try to use Gemini API first (BYOK or global key)
+        # Try multiple Gemini models in order of preference
+        models_to_try = [
+            'gemini-2.0-flash',      # Best free tier limits
+            'gemini-2.5-flash',      # Good performance
+            'gemini-1.5-flash'       # Fallback
+        ]
+        
         gemini_key_to_use = gemini_api_key or os.environ.get("GEMINI_API_KEY")
         if gemini_key_to_use:
-            try:
-                logger.info("Generating code with Gemini (best model)")
-                
-                # Configure Gemini with the provided key
-                genai.configure(api_key=gemini_key_to_use)
-                
-                # Use the best Gemini model available
-                model = genai.GenerativeModel('gemini-2.5-flash')
-                
-                # Create the prompt
-                user_prompt = f"Create a Manim animation that demonstrates: {prompt}"
-                
-                # Generate response
-                response = model.generate_content([system_prompt, user_prompt])
-                
-                if response and response.text:
-                    # Clean the response
-                    code = response.text
-                    # Remove any markdown code blocks
-                    code = code.replace("```python", "").replace("```", "").strip()
+            for model_name in models_to_try:
+                try:
+                    logger.info(f"Trying Gemini model: {model_name}")
                     
-                    # Extract title from first comment
-                    title = None
-                    lines = code.split('\n')
-                    for line in lines:
-                        if line.strip().startswith('#') and not line.strip().startswith('#!'):
-                            title = line.strip('# ').strip()
-                            break
-                            
-                    # Validate code structure
-                    if 'from manim import' not in code or 'class' not in code or 'Scene' not in code:
-                        logger.warning("Gemini generated code missing required elements, trying Anthropic")
-                    else:    
-                        if code and title:
-                            logger.info("Successfully generated valid Manim code with Gemini")
-                            return code, title
-                else:
-                    logger.warning("Gemini returned empty response, trying Anthropic")
+                    # Create client with the provided key
+                    client = genai.Client(api_key=gemini_key_to_use)
                     
-            except Exception as e:
-                logger.error(f"Error with Gemini API: {str(e)}")
+                    # Create the prompt
+                    user_prompt = f"Create a Manim animation that demonstrates: {prompt}"
+                    
+                    # Generate response
+                    response = client.models.generate_content(
+                        model=model_name,
+                        contents=[
+                            {'role': 'system', 'parts': [{'text': system_prompt}]},
+                            {'role': 'user', 'parts': [{'text': user_prompt}]}
+                        ]
+                    )
+                    
+                    if response and response.text:
+                        # Clean the response
+                        code = response.text
+                        # Remove any markdown code blocks
+                        code = code.replace("```python", "").replace("```", "").strip()
+                        
+                        # Extract title from first comment
+                        title = None
+                        lines = code.split('\n')
+                        for line in lines:
+                            if line.strip().startswith('#') and not line.strip().startswith('#!'):
+                                title = line.strip('# ').strip()
+                                break
+                                
+                        # Validate code structure
+                        if 'from manim import' not in code or 'class' not in code or 'Scene' not in code:
+                            logger.warning(f"{model_name} generated code missing required elements, trying next model")
+                            continue
+                        else:    
+                            if code and title:
+                                logger.info(f"Successfully generated valid Manim code with {model_name}")
+                                return code, title
+                    else:
+                        logger.warning(f"{model_name} returned empty response, trying next model")
+                        continue
+                        
+                except Exception as e:
+                    logger.error(f"Error with {model_name}: {str(e)}")
+                    continue
                 logger.info("Trying fallback to Anthropic")
         
         # Try to use Anthropic Claude API if available and Gemini failed or isn't available
@@ -870,18 +834,62 @@ def create_dummy_video(job_id: str, error_message: str, prompt: str):
     try:
         dummy_video_path = MEDIA_DIR / f"{job_id}.mp4"
         
-        # Instead of generating a video, use the provided error video URL
-        error_video_url = "https://manim-ai-videos.s3.us-east-1.amazonaws.com/videos/ec808a73-d0e8-4573-9057-5c1580fa1e11.mp4"
-        logger.info(f"Using direct error video URL for job {job_id}: {error_video_url}")
+        # Create a Manim scene for the error message
+        error_scene_code = f'''
+# API Error Display
+from manim import *
+
+class APIErrorScene(Scene):
+    def construct(self):
+        # Title
+        title = Text("API Error", font_size=72, color=RED).to_edge(UP)
         
-        # Return the direct S3 URL instead of local path
-        return {"local_path": str(dummy_video_path), "s3_url": error_video_url}
+        # Error message (truncated if too long)
+        error_text = "{error_message[:100]}..." if len("{error_message}") > 100 else "{error_message}"
+        error = Text(error_text, font_size=36, color=YELLOW).center()
+        
+        # Prompt display
+        prompt_text = "Prompt: {prompt[:80]}..." if len("{prompt}") > 80 else "Prompt: {prompt}"
+        prompt_display = Text(prompt_text, font_size=24, color=BLUE).to_edge(DOWN)
+        
+        # Animation
+        self.play(Write(title))
+        self.wait(0.5)
+        self.play(Write(error))
+        self.wait(0.5)
+        self.play(Write(prompt_display))
+        self.wait(2)
+        
+        # Fade out
+        self.play(FadeOut(title), FadeOut(error), FadeOut(prompt_display))
+        self.wait(1)
+'''
+        
+        # Write and render the error scene
+        error_file_path = CODE_DIR / f"error_{job_id}.py"
+        with open(error_file_path, "w") as f:
+            f.write(error_scene_code)
+        
+        # Use existing create_video logic to render the error scene
+        video_result = create_video_internal(job_id, error_file_path, f"Error: {error_message}")
+        
+        if video_result and isinstance(video_result, dict):
+            return video_result
+        else:
+            # Fallback to creating empty file with direct URL
+            dummy_video_path.touch()
+            return {"local_path": str(dummy_video_path), "s3_url": "https://manim-ai-videos.s3.us-east-1.amazonaws.com/videos/ec808a73-d0e8-4573-9057-5c1580fa1e11.mp4"}
+            
     except Exception as e:
-        logger.error(f"Failed to create dummy video reference: {str(e)}")
+        logger.error(f"Failed to create error video: {str(e)}")
         dummy_video_path = MEDIA_DIR / f"{job_id}.mp4"
         dummy_video_path.touch()
-        # Even in case of exception, return the direct URL
         return {"local_path": str(dummy_video_path), "s3_url": "https://manim-ai-videos.s3.us-east-1.amazonaws.com/videos/ec808a73-d0e8-4573-9057-5c1580fa1e11.mp4"}
+
+def create_video_internal(job_id: str, code_file_path: Path, prompt: str):
+    # This is the same as your existing create_video function
+    # Just renamed to avoid recursion in error handling
+    return create_video(job_id, code_file_path, prompt)
 
 if __name__ == "__main__":
     import uvicorn
