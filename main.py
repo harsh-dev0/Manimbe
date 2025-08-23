@@ -8,7 +8,7 @@ from pydantic import BaseModel
 from s3_storage import S3Storage
 
 from anthropic import Anthropic
-import google.generativeai as genai
+import google.genai as genai
 import os
 import subprocess
 import uuid
