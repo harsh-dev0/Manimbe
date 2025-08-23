@@ -536,7 +536,7 @@ matrix_eq = MathTex(r"\\mathbf{A} = \\begin{pmatrix} a & b \\\\ c & d \\end{pmat
 
         # Try Gemini 2.5 Pro first, then Flash models
         models_to_try = [
-            'gemini-2.5-flash'
+            'gemini-2.5-pro',
             'gemini-2.0-flash',
             'gemini-1.5-pro'
         ]
