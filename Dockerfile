@@ -1,6 +1,6 @@
 FROM python:3.10-slim
 
-# Install system dependencies with comprehensive LaTeX support for Manim
+# Install system dependencies with SAFE LaTeX packages that definitely exist
 RUN apt-get update && apt-get install -y --no-install-recommends \
     # Core dependencies
     ffmpeg \
@@ -11,25 +11,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-dev \
     libffi-dev \
     git \
-    # Comprehensive LaTeX installation for Manim
+    # SAFE LaTeX packages that are guaranteed to exist
     texlive-latex-base \
     texlive-latex-recommended \
     texlive-latex-extra \
     texlive-fonts-recommended \
-    texlive-fonts-extra \
     texlive-science \
-    texlive-math-extra \
-    texlive-publishers \
-    # Additional packages for complete Manim support
-    texlive-pictures \
-    texlive-plain-generic \
-    texlive-luatex \
-    texlive-xetex \
     # Essential LaTeX tools
     dvisvgm \
-    dvipng \
     ghostscript \
-    # Font packages for better rendering (only existing ones)
+    # Font packages
     fonts-dejavu-core \
     fonts-liberation \
     # Clean up in the same layer to reduce image size
