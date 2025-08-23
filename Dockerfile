@@ -1,6 +1,6 @@
 FROM python:3.10-slim
 
-# Install system dependencies with minimal LaTeX and essential fonts
+# Install system dependencies with comprehensive LaTeX support for Manim
 RUN apt-get update && apt-get install -y --no-install-recommends \
     # Core dependencies
     ffmpeg \
@@ -11,28 +11,43 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-dev \
     libffi-dev \
     git \
-    # Minimal LaTeX installation
+    # Comprehensive LaTeX installation for Manim
     texlive-latex-base \
     texlive-latex-recommended \
-    texlive-fonts-recommended \
     texlive-latex-extra \
+    texlive-fonts-recommended \
+    texlive-fonts-extra \
     texlive-science \
+    texlive-math-extra \
+    texlive-publishers \
+    # Additional packages for complete Manim support
+    texlive-pictures \
+    texlive-plain-generic \
+    texlive-luatex \
+    texlive-xetex \
+    # Essential LaTeX tools
     dvisvgm \
+    dvipng \
+    ghostscript \
+    # Font packages for better rendering
+    fonts-dejavu-core \
+    fonts-liberation \
+    fonts-linuxlibertine \
+    fonts-computer-modern \
     # Clean up in the same layer to reduce image size
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
-    # Remove unnecessary files (saves ~1.2GB)
+    # Remove unnecessary files but keep functionality
     && rm -rf \
        /usr/share/texlive/texmf-dist/doc \
        /usr/share/texlive/texmf-dist/source \
-       /usr/share/texlive/texmf-dist/tex/latex/misc/texdimens.tex \
-       /usr/share/texlive/texmf-dist/tex/latex/base/doc \
     # Remove man pages and other documentation
     && rm -rf /usr/share/man/* /usr/share/doc/* /usr/share/info/* \
     # Clean package cache
     && rm -rf /var/cache/apt/archives/* \
-    # Clean font cache
-    && fc-cache -f -v
+    # Update font and TeX databases
+    && fc-cache -f -v \
+    && texhash
 
 # Set working directory
 WORKDIR /app
