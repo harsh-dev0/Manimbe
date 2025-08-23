@@ -29,11 +29,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     dvisvgm \
     dvipng \
     ghostscript \
-    # Font packages for better rendering
+    # Font packages for better rendering (only existing ones)
     fonts-dejavu-core \
     fonts-liberation \
-    fonts-linuxlibertine \
-    fonts-computer-modern \
     # Clean up in the same layer to reduce image size
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
