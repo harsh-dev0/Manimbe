@@ -534,11 +534,11 @@ integral_text = MathTex(r"\\int_{-\\infty}^{\\infty} e^{-\\alpha x^2} dx = \\sqr
 matrix_eq = MathTex(r"\\mathbf{A} = \\begin{pmatrix} a & b \\\\ c & d \\end{pmatrix}")
 ```"""
 
-        # Try multiple Gemini models in order of preference
+        # Try Gemini 2.5 Pro first, then Flash models
         models_to_try = [
-            'gemini-2.0-flash',      # Best free tier limits
-            'gemini-2.5-flash',      # Good performance
-            'gemini-1.5-flash'       # Fallback
+            'gemini-2.5-flash'
+            'gemini-2.0-flash',
+            'gemini-1.5-pro'
         ]
         
         gemini_key_to_use = gemini_api_key or os.environ.get("GEMINI_API_KEY")
@@ -550,15 +550,18 @@ matrix_eq = MathTex(r"\\mathbf{A} = \\begin{pmatrix} a & b \\\\ c & d \\end{pmat
                     # Create client with the provided key
                     client = genai.Client(api_key=gemini_key_to_use)
                     
-                    # Create the prompt
-                    user_prompt = f"Create a Manim animation that demonstrates: {prompt}"
+                    # FIXED: Create the user prompt with system instructions included
+                    full_prompt = f"""System Instructions: {system_prompt}
+
+User Request: Create a Manim animation that demonstrates: {prompt}
+
+Remember to follow all the system instructions above and generate only valid Python code with no explanations."""
                     
-                    # Generate response
+                    # FIXED: Use correct Gemini API format - no system role
                     response = client.models.generate_content(
                         model=model_name,
                         contents=[
-                            {'role': 'system', 'parts': [{'text': system_prompt}]},
-                            {'role': 'user', 'parts': [{'text': user_prompt}]}
+                            {'role': 'user', 'parts': [{'text': full_prompt}]}
                         ]
                     )
                     
@@ -726,11 +729,12 @@ def create_video(job_id: str, code_file_path: Path, prompt: str):
         module_path = code_file_path.parent / f"{module_name}.py"
         shutil.copy(code_file_path, module_path)
 
-        # Create runner script with proper imports
+        # Create runner script with proper imports and resource optimization
         runner_script = f'''
-from manim import *
-import sys
 import os
+import sys
+from manim import *
+import numpy as np
 
 # Add the code directory to Python path
 sys.path.append(os.path.dirname(__file__))
@@ -738,37 +742,45 @@ sys.path.append(os.path.dirname(__file__))
 # Import the scene module
 from {module_name} import {scene_class}
 
-# Configure Manim
+# Configure Manim with resource optimization for Railway
 config.media_dir = "{str(MEDIA_DIR)}"
 config.video_dir = "{str(MEDIA_DIR)}"
 config.output_file = "{job_id}"
-config.frame_rate = 30
+config.frame_rate = 24  # Reduced from 30 for performance
 config.pixel_height = 720
 config.pixel_width = 1280
+config.frame_width = 14
+config.frame_height = 8
+
+# Memory optimization settings
+config.max_files_cached = 10
+config.flush_cache = True
 
 # Render the scene
-scene = {scene_class}()
-scene.render()
+try:
+    scene = {scene_class}()
+    scene.render()
+    print("Rendering completed successfully")
+except Exception as e:
+    print(f"Rendering error: {{e}}")
+    raise e
 '''
         runner_path = code_file_path.parent / f"run_{job_id}.py"
         with open(runner_path, "w") as f:
             f.write(runner_script)
 
-        # Run the script in a separate process with timeout
-        # Basic process arguments that work on all platforms
+        # Run the script in a separate process with timeout and resource limits
         popen_kwargs = {
             'stdout': subprocess.PIPE,
             'stderr': subprocess.PIPE,
             'text': True
         }
 
-        # For Windows, add CREATE_NO_WINDOW flag
-        # For Linux/Unix, we'll use preexec_fn to handle process group
+        # Platform-specific process configuration
         if sys.platform == 'win32':
             popen_kwargs['creationflags'] = subprocess.CREATE_NO_WINDOW
         else:
             # On Unix-like systems, start process in new session
-            # This ensures clean process termination
             import os
             popen_kwargs['preexec_fn'] = os.setsid
             
@@ -778,20 +790,22 @@ scene.render()
         )
 
         try:
-            stdout, stderr = process.communicate(timeout=120)  # 2 minute timeout
+            # Reduced timeout for Railway resource optimization
+            stdout, stderr = process.communicate(timeout=90)  # 90 seconds timeout
             logger.info(f"Process stdout: {stdout}")
             if stderr:
                 logger.error(f"Process stderr: {stderr}")
 
             if process.returncode != 0:
-                raise Exception(f"Render failed: {stderr}")
+                raise Exception(f"Render failed with code {process.returncode}: {stderr}")
 
         except subprocess.TimeoutExpired:
             process.kill()
-            raise Exception("Animation render timed out after 120 seconds")
+            process.wait()  # Ensure process is fully terminated
+            raise Exception("Animation render timed out after 90 seconds")
 
         finally:
-            # Cleanup temporary files
+            # Cleanup temporary files immediately to save memory
             try:
                 runner_path.unlink(missing_ok=True)
                 module_path.unlink(missing_ok=True)
@@ -804,11 +818,7 @@ scene.render()
             output_path = video_files[0]
             logger.info(f"Found rendered video at {output_path}")
             
-            # Debug S3 storage status
-            logger.info(f"S3 storage enabled in create_video: {s3_storage.is_enabled}")
-            logger.info(f"S3 bucket name in create_video: {s3_storage.bucket_name}")
-            
-            # If S3 is enabled, upload the video with prompt-based filename
+            # Try S3 upload if enabled
             if s3_storage.is_enabled:
                 logger.info(f"Attempting to upload video to S3: {output_path}")
                 prompt_filename = sanitize_filename(prompt)
@@ -816,8 +826,12 @@ scene.render()
                 s3_url = s3_storage.upload_file(str(output_path), s3_key)
                 logger.info(f"S3 upload result: {s3_url}")
                 if s3_url:
-                    # Store both local path and S3 URL
-                    logger.info(f"Returning S3 URL: {s3_url}")
+                    # Delete local file after successful S3 upload to save space
+                    try:
+                        output_path.unlink()
+                        logger.info(f"Deleted local file after S3 upload: {output_path}")
+                    except Exception as e:
+                        logger.warning(f"Could not delete local file: {e}")
                     return {"local_path": str(output_path), "s3_url": s3_url}
             else:
                 logger.info("S3 storage is not enabled, using local storage only")
@@ -831,38 +845,36 @@ scene.render()
         return create_dummy_video(job_id, str(e), prompt)
 
 def create_dummy_video(job_id: str, error_message: str, prompt: str):
+    """Create a simple error video with minimal resource usage"""
     try:
         dummy_video_path = MEDIA_DIR / f"{job_id}.mp4"
         
-        # Create a Manim scene for the error message
-        error_scene_code = f'''
-# API Error Display
+        # Create a minimal Manim scene for the error message
+        error_scene_code = f'''# Error Display Animation
 from manim import *
 
-class APIErrorScene(Scene):
+config.pixel_height = 720
+config.pixel_width = 1280
+config.frame_rate = 24
+
+class ErrorScene(Scene):
     def construct(self):
         # Title
-        title = Text("API Error", font_size=72, color=RED).to_edge(UP)
+        title = Text("Rendering Error", font_size=48, color=RED)
+        title.to_edge(UP)
         
-        # Error message (truncated if too long)
-        error_text = "{error_message[:100]}..." if len("{error_message}") > 100 else "{error_message}"
-        error = Text(error_text, font_size=36, color=YELLOW).center()
+        # Error message (truncated for display)
+        error_text = "{error_message[:80]}..." if len("{error_message}") > 80 else "{error_message}"
+        error = Text(error_text, font_size=24, color=YELLOW)
+        error.center()
         
-        # Prompt display
-        prompt_text = "Prompt: {prompt[:80]}..." if len("{prompt}") > 80 else "Prompt: {prompt}"
-        prompt_display = Text(prompt_text, font_size=24, color=BLUE).to_edge(DOWN)
-        
-        # Animation
+        # Simple animation
         self.play(Write(title))
         self.wait(0.5)
         self.play(Write(error))
-        self.wait(0.5)
-        self.play(Write(prompt_display))
         self.wait(2)
-        
-        # Fade out
-        self.play(FadeOut(title), FadeOut(error), FadeOut(prompt_display))
-        self.wait(1)
+        self.play(FadeOut(title), FadeOut(error))
+        self.wait(0.5)
 '''
         
         # Write and render the error scene
@@ -870,26 +882,91 @@ class APIErrorScene(Scene):
         with open(error_file_path, "w") as f:
             f.write(error_scene_code)
         
-        # Use existing create_video logic to render the error scene
-        video_result = create_video_internal(job_id, error_file_path, f"Error: {error_message}")
+        # Try to render the error scene
+        try:
+            video_result = create_video_direct(job_id, error_file_path, f"Error: {error_message}")
+            if video_result and isinstance(video_result, dict):
+                return video_result
+        except Exception as e:
+            logger.error(f"Failed to create error video: {str(e)}")
         
-        if video_result and isinstance(video_result, dict):
-            return video_result
-        else:
-            # Fallback to creating empty file with direct URL
-            dummy_video_path.touch()
-            return {"local_path": str(dummy_video_path), "s3_url": "https://manim-ai-videos.s3.us-east-1.amazonaws.com/videos/ec808a73-d0e8-4573-9057-5c1580fa1e11.mp4"}
+        # Final fallback - create empty file and use direct URL
+        dummy_video_path.touch()
+        return {
+            "local_path": str(dummy_video_path), 
+            "s3_url": "https://manim-ai-videos.s3.amazonaws.com/videos/api_error_demo.mp4"
+        }
             
     except Exception as e:
-        logger.error(f"Failed to create error video: {str(e)}")
+        logger.error(f"Failed to create dummy video: {str(e)}")
         dummy_video_path = MEDIA_DIR / f"{job_id}.mp4"
         dummy_video_path.touch()
-        return {"local_path": str(dummy_video_path), "s3_url": "https://manim-ai-videos.s3.us-east-1.amazonaws.com/videos/ec808a73-d0e8-4573-9057-5c1580fa1e11.mp4"}
+        return {
+            "local_path": str(dummy_video_path), 
+            "s3_url": "https://manim-ai-videos.s3.amazonaws.com/videos/api_error_demo.mp4"
+        }
 
-def create_video_internal(job_id: str, code_file_path: Path, prompt: str):
-    # This is the same as your existing create_video function
-    # Just renamed to avoid recursion in error handling
-    return create_video(job_id, code_file_path, prompt)
+def create_video_direct(job_id: str, code_file_path: Path, prompt: str):
+    """Direct video creation without recursion for error handling"""
+    try:
+        output_path = MEDIA_DIR / f"error_{job_id}.mp4"
+        scene_class = detect_scene_class(code_file_path)
+        if not scene_class:
+            scene_class = "ErrorScene"  # Default for error videos
+
+        # Create minimal runner for error video
+        runner_script = f'''
+import os
+import sys
+from manim import *
+
+sys.path.append(os.path.dirname(__file__))
+from error_{job_id} import {scene_class}
+
+config.media_dir = "{str(MEDIA_DIR)}"
+config.video_dir = "{str(MEDIA_DIR)}"
+config.output_file = "error_{job_id}"
+config.frame_rate = 24
+config.pixel_height = 720
+config.pixel_width = 1280
+
+scene = {scene_class}()
+scene.render()
+'''
+        
+        runner_path = code_file_path.parent / f"run_error_{job_id}.py"
+        with open(runner_path, "w") as f:
+            f.write(runner_script)
+
+        # Quick render with short timeout
+        process = subprocess.Popen(
+            [sys.executable, str(runner_path)],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+
+        try:
+            stdout, stderr = process.communicate(timeout=30)  # Short timeout for error videos
+            if process.returncode == 0:
+                error_videos = list(MEDIA_DIR.glob(f"*error_{job_id}*.mp4"))
+                if error_videos:
+                    return {"local_path": str(error_videos[0])}
+        except subprocess.TimeoutExpired:
+            process.kill()
+            
+        finally:
+            # Cleanup
+            try:
+                runner_path.unlink(missing_ok=True)
+            except:
+                pass
+
+        return None
+        
+    except Exception as e:
+        logger.error(f"Error in create_video_direct: {str(e)}")
+        return None
 
 if __name__ == "__main__":
     import uvicorn
