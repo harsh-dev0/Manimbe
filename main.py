@@ -25,7 +25,7 @@ import hashlib
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-app = FastAPI(title="VisuaMath Forge API")
+app = FastAPI(title="MANIM API")
 
 app.add_middleware(
     CORSMiddleware,
@@ -150,10 +150,81 @@ def sanitize_filename(prompt: str) -> str:
     # Add hash for uniqueness
     prompt_hash = hashlib.md5(prompt.encode()).hexdigest()[:8]
     return f"{sanitized}_{prompt_hash}"
+def sanitize_manim_code(code: str) -> str:
+    """Sanitize Manim code to fix common issues and deprecated methods"""
+    try:
+        logger.info("Sanitizing Manim code...")
+        
+        # Remove deprecated methods and fix common issues
+        fixes = [
+            # Fix deprecated shorten_ends method
+            (r'\.shorten_ends\([^)]*\)', ''),
+            (r'shorten_ends\s*=\s*[^,)]+[,)]?', ''),
+            
+            # Fix deprecated Line methods
+            (r'Line\.set_length\(', 'Line(ORIGIN, RIGHT).scale('),
+            
+            # Fix deprecated NumberPlane methods  
+            (r'NumberPlane\([^)]*background_line_style[^)]*\)', 'NumberPlane()'),
+            
+            # Fix deprecated Axes methods
+            (r'\.add_coordinates\(\)', '.add_coordinate_labels()'),
+            (r'axes\.plot\([^,]+,\s*label\s*=\s*[^,)]+', lambda m: m.group(0).split(',')[0]),
+            
+            # Fix deprecated positioning methods
+            (r'\.next_to_point\(', '.next_to('),
+            (r'\.shift_onto_screen\(\)', '.to_edge()'),
+            
+            # Fix deprecated animation methods
+            (r'ShowCreation\(', 'Create('),
+            (r'DrawBorderThenFill\(', 'DrawBorderThenFill('),
+            
+            # Fix deprecated color constants
+            (r'\bAVERAGE_COLOR\b', 'BLUE'),
+            (r'\bCOLOR_MAP\b', 'BLUE'),
+            
+            # Fix deprecated VMobject methods
+            (r'\.set_stroke_width\(', '.set_stroke(width='),
+            (r'\.set_fill_opacity\(', '.set_fill(opacity='),
+            
+            # Fix deprecated Scene methods
+            (r'self\.camera\.frame\.', 'self.camera.frame.'),
+            (r'self\.add_fixed_in_frame_mobjects\(', 'self.add_fixed_orientation_mobjects('),
+        ]
+        
+        # Apply all fixes
+        for pattern, replacement in fixes:
+            if callable(replacement):
+                code = re.sub(pattern, replacement, code)
+            else:
+                code = re.sub(pattern, replacement, code)
+        
+        # Ensure proper imports
+        if 'from manim import *' not in code:
+            code = 'from manim import *\n' + code
+            
+        # Ensure numpy import if used
+        if 'np.' in code and 'import numpy as np' not in code:
+            code = code.replace('from manim import *', 'from manim import *\nimport numpy as np')
+        
+        # Validate basic structure
+        if 'class' not in code or 'Scene' not in code:
+            raise ValueError("Code missing required class or Scene inheritance")
+            
+        if 'def construct(self):' not in code:
+            raise ValueError("Code missing construct method")
+        
+        logger.info("Code sanitization completed successfully")
+        return code
+        
+    except Exception as e:
+        logger.error(f"Error sanitizing code: {str(e)}")
+        raise ValueError(f"Code sanitization failed: {str(e)}")
+
 
 @app.get("/")
 def read_root():
-    return {"message": "Welcome to VisuaMath Forge API"}
+    return {"message": "Welcome to MANIM API"}
 
 @app.get("/test-s3-upload")
 def test_s3_upload():
@@ -371,6 +442,12 @@ def process_animation_request(job_id: str, prompt: str, gemini_api_key: str = No
         code, title = generate_manim_code(prompt, gemini_api_key)
         if not code:
             raise ValueError("Failed to generate Manim code")
+
+        try:
+            code = sanitize_manim_code(code)
+        except ValueError as e:
+            logger.error(f"Code sanitization failed: {str(e)}")
+            raise ValueError(f"Generated code is invalid: {str(e)}")
         
         # Save code to file
         code_file_path = CODE_DIR / f"{job_id}.py"
@@ -510,8 +587,10 @@ Always Remember this:
 4. Use proper mathematical notation with Greek letters (\\alpha, \\beta, \\gamma, etc.), mathematical operators, and formatting.
 5. Support for complex expressions like: \\frac{\\partial^2 f}{\\partial x^2}, \\int_{-\\infty}^{\\infty} e^{-x^2} dx, \\sum_{n=1}^{\\infty} \\frac{1}{n^2}, etc.
 6. DO NOT auto-generate labels on axes or plots. Label them manually and position them properly.
+7. The dimensions of video must be in accordanfe with landsacpe view: 1920x1080.
 
 ✅ STYLE AND STRUCTURE REQUIREMENTS:
+- Alway follow latest Manim code not deprecated ones
 - Only return valid Python code — no text, explanations, or markdown.
 - Start with a comment title (e.g., `# Advanced Calculus Visualization`)
 - Use only: `from manim import *`, `import numpy as np`
@@ -532,11 +611,32 @@ Create clear, comprehensive mathematical animations using full LaTeX support and
 equation = MathTex(r"\\frac{\\partial^2 u}{\\partial t^2} = c^2 \\nabla^2 u")
 integral_text = MathTex(r"\\int_{-\\infty}^{\\infty} e^{-\\alpha x^2} dx = \\sqrt{\\frac{\\pi}{\\alpha}}")
 matrix_eq = MathTex(r"\\mathbf{A} = \\begin{pmatrix} a & b \\\\ c & d \\end{pmatrix}")
-```"""
+```
+✅ GOOD PATTERNS:
+```python
+# Good line creation
+line = Line(ORIGIN, RIGHT * 2)
+
+# Good labeling  
+equation = MathTex(r"f(x) = x^2")
+equation.next_to(graph, UP)
+
+# Good animations
+self.play(Create(line))
+self.play(line.animate.rotate(PI/2))
+```
+
+❌ FORBIDDEN PATTERNS:
+```python
+# NEVER use these deprecated methods
+line.shorten_ends(0.1)  # FORBIDDEN
+axes.plot(func, label="f(x)")  # FORBIDDEN  
+ShowCreation(line)  # FORBIDDEN
+"""
 
         # Try Gemini 2.5 Pro first, then Flash models
         models_to_try = [
-            'gemini-2.5-flash',
+            'gemini-2.5-pro',
             'gemini-2.0-flash',
             'gemini-1.5-pro'
         ]
@@ -894,7 +994,7 @@ class ErrorScene(Scene):
         dummy_video_path.touch()
         return {
             "local_path": str(dummy_video_path), 
-            "s3_url": "https://manim-ai-videos.s3.amazonaws.com/videos/api_error_demo.mp4"
+            "s3_url": "https://manim-ai-videos.s3.amazonaws.com/videos/Create_a_video_saying_Gemini_API_Error_Please_try__ac101d18.mp4"
         }
             
     except Exception as e:
@@ -903,7 +1003,7 @@ class ErrorScene(Scene):
         dummy_video_path.touch()
         return {
             "local_path": str(dummy_video_path), 
-            "s3_url": "https://manim-ai-videos.s3.amazonaws.com/videos/api_error_demo.mp4"
+            "s3_url": "https://manim-ai-videos.s3.amazonaws.com/videos/Create_a_video_saying_Gemini_API_Error_Please_try__ac101d18.mp4"
         }
 
 def create_video_direct(job_id: str, code_file_path: Path, prompt: str):
