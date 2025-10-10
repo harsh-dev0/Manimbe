@@ -1,3 +1,5 @@
 .env
-venv
+myenv
 S3_UPLOAD_GUIDE.md
+outputs
+_pycache__

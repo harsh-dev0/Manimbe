@@ -108,7 +108,18 @@ class ManimGenerationResponse(BaseModel):
     status: str
     video_url: str = None
     title: str = None
+    code: str = None
+    previous_video_url: str = None
+    previous_video_id: str = None
     error: str = None
+    error_type: str = None
+
+class EditRequest(BaseModel):
+    code: str
+    prompt: str
+    previous_video_url: str = None
+    previous_video_id: str = None
+    gemini_api_key: str = None
 
 generation_jobs = {}
 
@@ -135,6 +146,37 @@ def save_job(job_id, job_data):
         logger.info(f"Saved job {job_id} to disk")
     except Exception as e:
         logger.error(f"Error saving job {job_id}: {e}")
+
+def categorize_error(error_message: str) -> tuple[str, str]:
+    """Categorize errors and return user-friendly messages"""
+    error_lower = error_message.lower()
+    
+    if "timeout" in error_lower or "timed out" in error_lower:
+        return "TIMEOUT_ERROR", "Video rendering took too long. The animation might be too complex. Try simplifying your request."
+    
+    elif "memory" in error_lower or "out of memory" in error_lower:
+        return "MEMORY_ERROR", "Video rendering failed due to insufficient memory. Try creating a shorter or simpler animation."
+    
+    elif "latex" in error_lower or "tex" in error_lower or "dvisvgm" in error_lower:
+        return "LATEX_ERROR", "LaTeX rendering failed. There might be an issue with mathematical expressions in your animation."
+    
+    elif "api" in error_lower or "rate limit" in error_lower or "quota" in error_lower:
+        return "API_ERROR", "AI service is temporarily unavailable. Please try again in a moment."
+    
+    elif "invalid code" in error_lower or "syntax" in error_lower or "indentation" in error_lower:
+        return "CODE_ERROR", "Generated code has errors. Please try rephrasing your request."
+    
+    elif "file not found" in error_lower or "no such file" in error_lower:
+        return "DEPENDENCY_ERROR", "Missing required dependencies for rendering. Please contact support."
+    
+    elif "failed to generate" in error_lower or "no code" in error_lower:
+        return "GENERATION_ERROR", "Failed to generate animation code. Please try a different prompt."
+    
+    elif "render failed" in error_lower or "rendering error" in error_lower:
+        return "RENDER_ERROR", "Video rendering failed. The animation might be too complex or contain unsupported features."
+    
+    else:
+        return "UNKNOWN_ERROR", "An unexpected error occurred. Please try again or contact support."
 
 def sanitize_filename(prompt: str) -> str:
     """Convert prompt to a safe filename for S3 upload"""
@@ -279,11 +321,14 @@ async def generate_animation(request: PromptRequest, background_tasks: Backgroun
         error_message = f"Failed to start animation task: {str(e)}"
         logger.error(error_message)
         
+        error_type, user_message = categorize_error(error_message)
+        
         job_data = {
             "status": "failed",
             "created_at": time.time(),
             "prompt": request.prompt,
-            "error": error_message,
+            "error": user_message,
+            "error_type": error_type,
             "gemini_api_key": request.gemini_api_key
         }
         
@@ -293,7 +338,65 @@ async def generate_animation(request: PromptRequest, background_tasks: Backgroun
         return ManimGenerationResponse(
             id=job_id,
             status="failed",
-            error=error_message
+            error=user_message,
+            error_type=error_type
+        )
+
+@app.post("/edit", response_model=ManimGenerationResponse)
+async def edit_animation(request: EditRequest, background_tasks: BackgroundTasks):
+    job_id = str(uuid.uuid4())
+    job_data = {
+        "status": "processing",
+        "created_at": time.time(),
+        "edit_prompt": request.prompt,
+        "original_code": request.code,
+        "previous_video_url": request.previous_video_url,
+        "previous_video_id": request.previous_video_id,
+        "gemini_api_key": request.gemini_api_key
+    }
+    generation_jobs[job_id] = job_data
+    save_job(job_id, job_data)
+
+    try:
+        background_tasks.add_task(
+            process_edit_request, 
+            job_id=job_id, 
+            code=request.code,
+            prompt=request.prompt,
+            previous_video_url=request.previous_video_url,
+            previous_video_id=request.previous_video_id,
+            gemini_api_key=request.gemini_api_key
+        )
+        return ManimGenerationResponse(
+            id=job_id,
+            status="processing"
+        )
+    except Exception as e:
+        error_message = f"Failed to start edit task: {str(e)}"
+        logger.error(error_message)
+        
+        error_type, user_message = categorize_error(error_message)
+        
+        job_data = {
+            "status": "failed",
+            "created_at": time.time(),
+            "edit_prompt": request.prompt,
+            "original_code": request.code,
+            "previous_video_url": request.previous_video_url,
+            "previous_video_id": request.previous_video_id,
+            "error": user_message,
+            "error_type": error_type,
+            "gemini_api_key": request.gemini_api_key
+        }
+        
+        generation_jobs[job_id] = job_data
+        save_job(job_id, job_data)
+        
+        return ManimGenerationResponse(
+            id=job_id,
+            status="failed",
+            error=user_message,
+            error_type=error_type
         )
 
 @app.get("/status/{job_id}", response_model=ManimGenerationResponse)
@@ -330,8 +433,16 @@ async def get_job_status(job_id: str):
             response.video_url = job["video_url"]
         if "title" in job:
             response.title = job["title"]
+        if "code" in job:
+            response.code = job["code"]
+        if "previous_video_url" in job:
+            response.previous_video_url = job["previous_video_url"]
+        if "previous_video_id" in job:
+            response.previous_video_id = job["previous_video_id"]
         if "error" in job:
             response.error = job["error"]
+        if "error_type" in job:
+            response.error_type = job["error_type"]
             
         return response
     except Exception as e:
@@ -425,6 +536,284 @@ def cleanup_old_jobs():
     except Exception as e:
         logger.error(f"Error during job cleanup: {str(e)}")
 
+def edit_manim_code(original_code: str, edit_prompt: str, gemini_api_key: str = None):
+    """Edit existing Manim code using AI based on user prompt"""
+    try:
+        system_prompt = """You are a Manim expert specializing in editing and improving existing Manim code.
+
+Your task is to modify the provided Manim code according to the user's edit request.
+
+⚠️ VERY IMPORTANT RULES:
+1. DO NOT use `label=` in `axes.plot()` — it causes rendering issues
+2. Only use LaTeX fully supported by Manim
+3. Maintain the existing structure and class names unless specifically asked to change them
+4. Keep all existing functionality unless the user asks to remove it
+5. Follow all modern Manim best practices
+6. The video dimensions must remain in landscape: 1920x1080
+7. Always preserve imports and configuration settings unless asked to change them
+
+✅ YOUR RESPONSE MUST:
+- Return ONLY the complete modified Python code
+- Include NO explanations, NO markdown, NO text outside the code
+- Maintain proper indentation and structure
+- Keep the same class name unless explicitly asked to change it
+- Preserve all working features from the original code
+
+Example input:
+Original code: [some manim code]
+Edit request: "Make the circle red and add a square"
+
+Example output:
+# Modified animation
+from manim import *
+[complete modified code here]
+"""
+
+        models_to_try = [
+            'gemini-2.5-pro',
+            'gemini-2.0-flash',
+            'gemini-1.5-pro'
+        ]
+        
+        gemini_key_to_use = gemini_api_key or os.environ.get("GEMINI_API_KEY")
+        if gemini_key_to_use:
+            for model_name in models_to_try:
+                try:
+                    logger.info(f"Trying to edit code with Gemini model: {model_name}")
+                    
+                    client = genai.Client(api_key=gemini_key_to_use)
+                    
+                    full_prompt = f"""System Instructions: {system_prompt}
+
+Original Manim Code:
+```python
+{original_code}
+```
+
+User's Edit Request: {edit_prompt}
+
+Please provide the complete modified code following all the system instructions above. Return ONLY the modified Python code with no explanations."""
+                    
+                    response = client.models.generate_content(
+                        model=model_name,
+                        contents=[
+                            {'role': 'user', 'parts': [{'text': full_prompt}]}
+                        ]
+                    )
+                    
+                    if response and response.text:
+                        code = response.text
+                        code = code.replace("```python", "").replace("```", "").strip()
+                        
+                        title = None
+                        lines = code.split('\n')
+                        for line in lines:
+                            if line.strip().startswith('#') and not line.strip().startswith('#!'):
+                                title = line.strip('# ').strip()
+                                break
+                        
+                        if not title:
+                            title = "Edited Animation"
+                                
+                        if 'from manim import' not in code or 'class' not in code or 'Scene' not in code:
+                            logger.warning(f"{model_name} generated code missing required elements, trying next model")
+                            continue
+                        else:    
+                            if code:
+                                logger.info(f"Successfully edited Manim code with {model_name}")
+                                return code, title
+                    else:
+                        logger.warning(f"{model_name} returned empty response, trying next model")
+                        continue
+                        
+                except Exception as e:
+                    logger.error(f"Error with {model_name}: {str(e)}")
+                    continue
+        
+        if 'anthropic_client' in globals() and anthropic_client:
+            try:
+                logger.info("Editing code with Anthropic Claude")
+                
+                response = anthropic_client.messages.create(
+                    model="claude-3-5-haiku-20241022",  
+                    max_tokens=2000,                    
+                    temperature=0.1,                    
+                    system=system_prompt,               
+                    messages=[{
+                        "role": "user", 
+                        "content": f"Original Manim Code:\n```python\n{original_code}\n```\n\nUser's Edit Request: {edit_prompt}\n\nPlease provide the complete modified code."
+                    }]
+                )
+                
+                code = response.content[0].text
+                code = code.replace("```python", "").replace("```", "").strip()
+                
+                title = None
+                lines = code.split('\n')
+                for line in lines:
+                    if line.strip().startswith('#') and not line.strip().startswith('#!'):
+                        title = line.strip('# ').strip()
+                        break
+                
+                if not title:
+                    title = "Edited Animation"
+                        
+                if 'from manim import' not in code or 'class' not in code or 'Scene' not in code:
+                    logger.warning("Claude generated code missing required elements")
+                else:    
+                    if code:
+                        logger.info("Successfully edited Manim code with Claude")
+                        return code, title
+                        
+            except Exception as e:
+                logger.error(f"Error with Anthropic API: {str(e)}")
+        
+        logger.warning("All AI models failed to edit code, returning original code")
+        return original_code, "Edit Failed - Original Code"
+
+    except Exception as e:
+        logger.error(f"Error in code editing: {str(e)}")
+        return original_code, "Edit Failed - Original Code"
+
+def process_edit_request(job_id: str, code: str, prompt: str, previous_video_url: str = None, previous_video_id: str = None, gemini_api_key: str = None):
+    try:
+        logger.info(f"Processing edit request: {job_id}, prompt: {prompt}")
+        logger.info(f"Previous video URL: {previous_video_url}, Previous video ID: {previous_video_id}")
+        
+        generation_jobs[job_id] = {
+            "status": "processing",
+            "edit_prompt": prompt,
+            "original_code": code,
+            "previous_video_url": previous_video_url,
+            "previous_video_id": previous_video_id,
+            "created_at": time.time(),
+            "gemini_api_key": gemini_api_key
+        }
+        save_job(job_id, generation_jobs[job_id])
+        
+        edited_code, title = edit_manim_code(code, prompt, gemini_api_key)
+        if not edited_code:
+            raise ValueError("Failed to edit Manim code")
+
+        try:
+            edited_code = sanitize_manim_code(edited_code)
+        except ValueError as e:
+            logger.error(f"Code sanitization failed: {str(e)}")
+            raise ValueError(f"Edited code is invalid: {str(e)}")
+        
+        code_file_path = CODE_DIR / f"{job_id}.py"
+        with open(code_file_path, "w") as f:
+            f.write(edited_code)
+        
+        generation_jobs[job_id].update({
+            "title": title,
+            "code": edited_code,
+            "status": "rendering"
+        })
+        save_job(job_id, generation_jobs[job_id])
+        
+        video_result = create_video(job_id, code_file_path, prompt)
+        logger.info(f"Video creation result: {video_result}")
+        
+        if video_result and isinstance(video_result, dict) and "local_path" in video_result:
+            video_path = video_result["local_path"]
+            output_path = Path(video_path)
+            
+            if "s3_url" in video_result:
+                video_url = video_result["s3_url"]
+                logger.info(f"Using S3 URL from create_video: {video_url}")
+            else:
+                try:
+                    aws_access_key = os.environ.get("AWS_ACCESS_KEY_ID")
+                    aws_secret_key = os.environ.get("AWS_SECRET_ACCESS_KEY")
+                    bucket_name = os.environ.get("S3_BUCKET_NAME")
+                    aws_region = os.environ.get("AWS_REGION", "us-east-1")
+                    
+                    if aws_access_key and aws_secret_key and bucket_name and os.path.exists(output_path):
+                        logger.info(f"S3 upload: Credentials found, uploading to bucket {bucket_name}")
+                        
+                        import boto3
+                        s3_client = boto3.client(
+                            's3',
+                            aws_access_key_id=aws_access_key,
+                            aws_secret_access_key=aws_secret_key,
+                            region_name=aws_region
+                        )
+                        
+                        prompt_filename = sanitize_filename(prompt)
+                        s3_key = f"videos/{prompt_filename}.mp4"
+                        logger.info(f"S3 upload: Uploading {output_path} to {bucket_name}/{s3_key}")
+                        
+                        with open(str(output_path), 'rb') as data:
+                            s3_client.put_object(
+                                Bucket=bucket_name,
+                                Key=s3_key,
+                                Body=data,
+                                ContentType='video/mp4'
+                            )
+                        logger.info(f"S3 upload: Direct put_object completed successfully")
+                        
+                        s3_url = f"https://{bucket_name}.s3.amazonaws.com/{s3_key}"
+                        logger.info(f"S3 upload: Success! URL: {s3_url}")
+                        video_url = s3_url
+                    else:
+                        logger.warning(f"S3 upload: AWS credentials not found or file doesn't exist, using local URL")
+                        video_url = f"/media/{job_id}.mp4"
+                except Exception as e:
+                    logger.error(f"S3 upload error: {str(e)}")
+                    import traceback
+                    logger.error(f"S3 upload error details:\n{traceback.format_exc()}")
+                    video_url = f"/media/{job_id}.mp4"
+        else:
+            logger.error(f"Invalid video result: {video_result}")
+            video_url = f"/media/{job_id}.mp4"
+            video_path = str(MEDIA_DIR / f"{job_id}.mp4")
+            Path(video_path).touch()
+        
+        logger.info(f"Final video URL: {video_url}")
+        generation_jobs[job_id].update({
+            "status": "completed",
+            "video_url": video_url,
+            "video_path": video_path,
+            "previous_video_url": previous_video_url,
+            "previous_video_id": previous_video_id,
+            "completed_at": time.time()
+        })
+        save_job(job_id, generation_jobs[job_id])
+        
+    except Exception as e:
+        error_message = str(e)
+        logger.error(f"Error processing edit request: {error_message}")
+        
+        error_type, user_message = categorize_error(error_message)
+        
+        if 'title' not in locals():
+            title = None
+            
+        if job_id in generation_jobs:
+            generation_jobs[job_id].update({
+                "status": "failed",
+                "error": user_message,
+                "error_type": error_type,
+                "completed_at": time.time()
+            })
+        else:
+            generation_jobs[job_id] = {
+                "status": "failed",
+                "created_at": time.time(),
+                "edit_prompt": prompt,
+                "original_code": code,
+                "previous_video_url": previous_video_url,
+                "previous_video_id": previous_video_id,
+                "error": user_message,
+                "error_type": error_type,
+                "title": title,
+                "gemini_api_key": gemini_api_key
+            }
+            
+        save_job(job_id, generation_jobs[job_id])
+        logger.info(f"Edit failed for job {job_id}: {error_type}")
+
 def process_animation_request(job_id: str, prompt: str, gemini_api_key: str = None):
     try:
         logger.info(f"Processing animation request: {job_id}, prompt: {prompt}")
@@ -457,6 +846,7 @@ def process_animation_request(job_id: str, prompt: str, gemini_api_key: str = No
         # Update job status to rendering
         generation_jobs[job_id].update({
             "title": title,
+            "code": code,
             "status": "rendering"
         })
         save_job(job_id, generation_jobs[job_id])
@@ -548,15 +938,16 @@ def process_animation_request(job_id: str, prompt: str, gemini_api_key: str = No
         error_message = str(e)
         logger.error(f"Error processing animation request: {error_message}")
         
-        # Make sure we have a title variable defined
+        error_type, user_message = categorize_error(error_message)
+        
         if 'title' not in locals():
             title = None
             
-        # Update job with error status
         if job_id in generation_jobs:
             generation_jobs[job_id].update({
                 "status": "failed",
-                "error": error_message,
+                "error": user_message,
+                "error_type": error_type,
                 "completed_at": time.time()
             })
         else:
@@ -564,13 +955,14 @@ def process_animation_request(job_id: str, prompt: str, gemini_api_key: str = No
                 "status": "failed",
                 "created_at": time.time(),
                 "prompt": prompt,
-                "error": error_message,
+                "error": user_message,
+                "error_type": error_type,
                 "title": title,
                 "gemini_api_key": gemini_api_key
             }
             
         save_job(job_id, generation_jobs[job_id])
-        logger.info(f"Animation generation failed for job {job_id}")
+        logger.info(f"Animation generation failed for job {job_id}: {error_type}")
 
 def generate_manim_code(prompt: str, gemini_api_key: str = None):
     """Generate Manim code using AI with Gemini first, then Anthropic fallback"""
@@ -833,6 +1225,14 @@ def create_video(job_id: str, code_file_path: Path, prompt: str):
         runner_script = f'''
 import os
 import sys
+import platform
+
+# Add MiKTeX to PATH on Windows (fix for LaTeX rendering)
+if platform.system() == "Windows":
+    miktex_path = r"C:\\Users\\harsh\\AppData\\Local\\Programs\\MiKTeX\\miktex\\bin\\x64"
+    if os.path.exists(miktex_path) and miktex_path not in os.environ.get("PATH", ""):
+        os.environ["PATH"] = miktex_path + os.pathsep + os.environ.get("PATH", "")
+
 from manim import *
 import numpy as np
 
@@ -942,7 +1342,7 @@ except Exception as e:
 
     except Exception as e:
         logger.error(f"Error creating video: {str(e)}")
-        return create_dummy_video(job_id, str(e), prompt)
+        raise Exception(f"Video rendering failed: {str(e)}")
 
 def create_dummy_video(job_id: str, error_message: str, prompt: str):
     """Create a simple error video with minimal resource usage"""
@@ -1018,6 +1418,14 @@ def create_video_direct(job_id: str, code_file_path: Path, prompt: str):
         runner_script = f'''
 import os
 import sys
+import platform
+
+# Add MiKTeX to PATH on Windows (fix for LaTeX rendering)
+if platform.system() == "Windows":
+    miktex_path = r"C:\\Users\\harsh\\AppData\\Local\\Programs\\MiKTeX\\miktex\\bin\\x64"
+    if os.path.exists(miktex_path) and miktex_path not in os.environ.get("PATH", ""):
+        os.environ["PATH"] = miktex_path + os.pathsep + os.environ.get("PATH", "")
+
 from manim import *
 
 sys.path.append(os.path.dirname(__file__))
