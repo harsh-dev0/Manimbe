@@ -2,4 +2,4 @@
 myenv
 S3_UPLOAD_GUIDE.md
 outputs
-_pycache__
+__pycache__
