@@ -980,6 +980,14 @@ Always Remember this:
 5. Support for complex expressions like: \\frac{\\partial^2 f}{\\partial x^2}, \\int_{-\\infty}^{\\infty} e^{-x^2} dx, \\sum_{n=1}^{\\infty} \\frac{1}{n^2}, etc.
 6. DO NOT auto-generate labels on axes or plots. Label them manually and position them properly.
 7. The dimensions of video must be in accordanfe with landsacpe view: 1920x1080.
+8. Video must not exceed 20 seconds limit
+
+⚠️ CRITICAL REQUIREMENTS - NEVER USE:
+1. axes.get_tangent_line() - FORBIDDEN, implement custom tangent calculations
+2. add_coordinate_labels() - FORBIDDEN, use add_coordinates() instead
+3. get_graph() without error handling - FORBIDDEN
+4. Automatic graph labels - FORBIDDEN
+5. Any deprecated methods like ShowCreation - FORBIDDEN
 
 ✅ STYLE AND STRUCTURE REQUIREMENTS:
 - Alway follow latest Manim code not deprecated ones
