@@ -192,76 +192,81 @@ def sanitize_filename(prompt: str) -> str:
     # Add hash for uniqueness
     prompt_hash = hashlib.md5(prompt.encode()).hexdigest()[:8]
     return f"{sanitized}_{prompt_hash}"
-def sanitize_manim_code(code: str) -> str:
-    """Sanitize Manim code to fix common issues and deprecated methods"""
-    try:
-        logger.info("Sanitizing Manim code...")
+# def sanitize_manim_code(code: str) -> str:
+#     """Sanitize Manim code to fix common issues and deprecated methods"""
+#     try:
+#         logger.info("Sanitizing Manim code...")
         
-        # Remove deprecated methods and fix common issues
-        fixes = [
-            # Fix deprecated shorten_ends method
-            (r'\.shorten_ends\([^)]*\)', ''),
-            (r'shorten_ends\s*=\s*[^,)]+[,)]?', ''),
+#         # Remove deprecated methods and fix common issues
+#         fixes = [
+#             # Fix deprecated shorten_ends method
+#             (r'\.shorten_ends\([^)]*\)', ''),
+#             (r'shorten_ends\s*=\s*[^,)]+[,)]?', ''),
             
-            # Fix deprecated Line methods
-            (r'Line\.set_length\(', 'Line(ORIGIN, RIGHT).scale('),
+#             # Fix deprecated Line methods
+#             (r'Line\.set_length\(', 'Line(ORIGIN, RIGHT).scale('),
             
-            # Fix deprecated NumberPlane methods  
-            (r'NumberPlane\([^)]*background_line_style[^)]*\)', 'NumberPlane()'),
+#             # Fix deprecated NumberPlane methods  
+#             (r'NumberPlane\([^)]*background_line_style[^)]*\)', 'NumberPlane()'),
             
-            # Fix deprecated Axes methods
-            (r'\.add_coordinates\(\)', '.add_coordinate_labels()'),
-            (r'axes\.plot\([^,]+,\s*label\s*=\s*[^,)]+', lambda m: m.group(0).split(',')[0]),
+#             # Fix deprecated Axes methods
+#             (r'\.add_coordinates\(\)', '.add_coordinate_labels()'),
+#             (r'axes\.plot\([^,]+,\s*label\s*=\s*[^,)]+', lambda m: m.group(0).split(',')[0]),
             
-            # Fix deprecated positioning methods
-            (r'\.next_to_point\(', '.next_to('),
-            (r'\.shift_onto_screen\(\)', '.to_edge()'),
+#             # Fix deprecated positioning methods
+#             (r'\.next_to_point\(', '.next_to('),
+#             (r'\.shift_onto_screen\(\)', '.to_edge()'),
             
-            # Fix deprecated animation methods
-            (r'ShowCreation\(', 'Create('),
-            (r'DrawBorderThenFill\(', 'DrawBorderThenFill('),
+#             # Fix deprecated animation methods
+#             (r'ShowCreation\(', 'Create('),
+#             (r'DrawBorderThenFill\(', 'DrawBorderThenFill('),
+#             (r'\.add_coordinate_labels\(\)', '.add_coordinates()'),
+#             (r'\.add_coordinates\(\)', '.add_coordinates()'),
             
-            # Fix deprecated color constants
-            (r'\bAVERAGE_COLOR\b', 'BLUE'),
-            (r'\bCOLOR_MAP\b', 'BLUE'),
+#             # Fix axis labeling
+#             (r'\.add_numbers\(\)', '.add_coordinates()'),
+#             (r'\.add_labels\(\)', '.add_coordinates()'),
+#             # Fix deprecated color constants
+#             (r'\bAVERAGE_COLOR\b', 'BLUE'),
+#             (r'\bCOLOR_MAP\b', 'BLUE'),
             
-            # Fix deprecated VMobject methods
-            (r'\.set_stroke_width\(', '.set_stroke(width='),
-            (r'\.set_fill_opacity\(', '.set_fill(opacity='),
+#             # Fix deprecated VMobject methods
+#             (r'\.set_stroke_width\(', '.set_stroke(width='),
+#             (r'\.set_fill_opacity\(', '.set_fill(opacity='),
             
-            # Fix deprecated Scene methods
-            (r'self\.camera\.frame\.', 'self.camera.frame.'),
-            (r'self\.add_fixed_in_frame_mobjects\(', 'self.add_fixed_orientation_mobjects('),
-        ]
+#             # Fix deprecated Scene methods
+#             (r'self\.camera\.frame\.', 'self.camera.frame.'),
+#             (r'self\.add_fixed_in_frame_mobjects\(', 'self.add_fixed_orientation_mobjects('),
+#         ]
         
-        # Apply all fixes
-        for pattern, replacement in fixes:
-            if callable(replacement):
-                code = re.sub(pattern, replacement, code)
-            else:
-                code = re.sub(pattern, replacement, code)
+#         # Apply all fixes
+#         for pattern, replacement in fixes:
+#             if callable(replacement):
+#                 code = re.sub(pattern, replacement, code)
+#             else:
+#                 code = re.sub(pattern, replacement, code)
         
-        # Ensure proper imports
-        if 'from manim import *' not in code:
-            code = 'from manim import *\n' + code
+#         # Ensure proper imports
+#         if 'from manim import *' not in code:
+#             code = 'from manim import *\n' + code
             
-        # Ensure numpy import if used
-        if 'np.' in code and 'import numpy as np' not in code:
-            code = code.replace('from manim import *', 'from manim import *\nimport numpy as np')
+#         # Ensure numpy import if used
+#         if 'np.' in code and 'import numpy as np' not in code:
+#             code = code.replace('from manim import *', 'from manim import *\nimport numpy as np')
         
-        # Validate basic structure
-        if 'class' not in code or 'Scene' not in code:
-            raise ValueError("Code missing required class or Scene inheritance")
+#         # Validate basic structure
+#         if 'class' not in code or 'Scene' not in code:
+#             raise ValueError("Code missing required class or Scene inheritance")
             
-        if 'def construct(self):' not in code:
-            raise ValueError("Code missing construct method")
+#         if 'def construct(self):' not in code:
+#             raise ValueError("Code missing construct method")
         
-        logger.info("Code sanitization completed successfully")
-        return code
+#         logger.info("Code sanitization completed successfully")
+#         return code
         
-    except Exception as e:
-        logger.error(f"Error sanitizing code: {str(e)}")
-        raise ValueError(f"Code sanitization failed: {str(e)}")
+#     except Exception as e:
+#         logger.error(f"Error sanitizing code: {str(e)}")
+#         raise ValueError(f"Code sanitization failed: {str(e)}")
 
 
 @app.get("/")
@@ -695,11 +700,11 @@ def process_edit_request(job_id: str, code: str, prompt: str, previous_video_url
         if not edited_code:
             raise ValueError("Failed to edit Manim code")
 
-        try:
-            edited_code = sanitize_manim_code(edited_code)
-        except ValueError as e:
-            logger.error(f"Code sanitization failed: {str(e)}")
-            raise ValueError(f"Edited code is invalid: {str(e)}")
+        # try:
+        #     edited_code = sanitize_manim_code(edited_code)
+        # except ValueError as e:
+        #     logger.error(f"Code sanitization failed: {str(e)}")
+        #     raise ValueError(f"Edited code is invalid: {str(e)}")
         
         code_file_path = CODE_DIR / f"{job_id}.py"
         with open(code_file_path, "w") as f:
@@ -832,11 +837,11 @@ def process_animation_request(job_id: str, prompt: str, gemini_api_key: str = No
         if not code:
             raise ValueError("Failed to generate Manim code")
 
-        try:
-            code = sanitize_manim_code(code)
-        except ValueError as e:
-            logger.error(f"Code sanitization failed: {str(e)}")
-            raise ValueError(f"Generated code is invalid: {str(e)}")
+        # try:
+        #     code = sanitize_manim_code(code)
+        # except ValueError as e:
+        #     logger.error(f"Code sanitization failed: {str(e)}")
+        #     raise ValueError(f"Generated code is invalid: {str(e)}")
         
         # Save code to file
         code_file_path = CODE_DIR / f"{job_id}.py"
@@ -988,7 +993,23 @@ Always Remember this:
 3. get_graph() without error handling - FORBIDDEN
 4. Automatic graph labels - FORBIDDEN
 5. Any deprecated methods like ShowCreation - FORBIDDEN
+⚠️ AXIS LABELING RULES:
+1. ALWAYS use .add_coordinates() for adding numbers to axes
+2. NEVER use deprecated methods like:
+   - add_coordinate_labels() ❌
+   - add_numbers() ❌
+   - add_labels() ❌
 
+✅ CORRECT PATTERN:
+```python
+axes = Axes(
+    x_range=[-5, 5, 1],
+    y_range=[-3, 3, 1]
+).add_coordinates()  # This is the correct method
+
+# For custom labels:
+x_label = MathTex("x").next_to(axes.x_axis, RIGHT)
+y_label = MathTex("y").next_to(axes.y_axis, UP)
 ✅ STYLE AND STRUCTURE REQUIREMENTS:
 - Alway follow latest Manim code not deprecated ones
 - Only return valid Python code — no text, explanations, or markdown.
